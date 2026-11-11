@@ -1,1 +1,239 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart AI — Trading Automation yang Terukur</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme=dark]{--bg:#070d18;--bg-elevated:#0c1424;--bg-card:rgba(15,25,45,.75);--bg-card-solid:#0f192d;--border:rgba(94,234,212,.12);--border-hover:rgba(94,234,212,.28);--cyan:#2dd4bf;--teal:#14b8a6;--green:#34d399;--text:#f1f5f9;--text-muted:#94a3b8;--text-dim:#64748b;--yellow:#fbbf24;--purple:#a78bfa;--gold:#f59e0b;--shadow:0 25px 50px -12px rgba(0,0,0,.55);--nav-bg:rgba(7,13,24,.85);--input-bg:rgba(255,255,255,.03);--input-border:rgba(255,255,255,.08);--radius:16px;--radius-lg:20px}
+[data-theme=light]{--bg:#f8fafc;--bg-elevated:#fff;--bg-card:rgba(255,255,255,.9);--bg-card-solid:#fff;--border:rgba(15,23,42,.08);--border-hover:rgba(20,184,166,.35);--cyan:#0d9488;--teal:#0f766e;--green:#059669;--text:#0f172a;--text-muted:#475569;--text-dim:#94a3b8;--yellow:#d97706;--purple:#7c3aed;--gold:#b45309;--shadow:0 20px 40px -12px rgba(15,23,42,.12);--nav-bg:rgba(248,250,252,.9);--input-bg:rgba(15,23,42,.03);--input-border:rgba(15,23,42,.1)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background .3s,color .3s}
+#scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--teal));z-index:1100}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.35rem;font-weight:800;color:var(--text);text-decoration:none;z-index:1001}.logo span{color:var(--cyan)}
+.nav-links{display:flex;gap:1.5rem;list-style:none}.nav-links a{color:var(--text-muted);text-decoration:none;font-size:.875rem;font-weight:500}.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:.55rem}
+.theme-toggle{width:38px;height:38px;border-radius:50%;background:var(--bg-card-solid);border:1px solid var(--border);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}.theme-toggle:hover{border-color:var(--cyan);color:var(--cyan)}.theme-toggle .icon-sun{display:none}[data-theme=light] .theme-toggle .icon-moon{display:none}[data-theme=light] .theme-toggle .icon-sun{display:block}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:1001}.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}.hamburger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}.hamburger.active span:nth-child(2){opacity:0}.hamburger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}.mobile-menu.open{display:flex}.mobile-menu a{color:var(--text);text-decoration:none;font-size:1.25rem;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.7rem 1.35rem;border-radius:999px;font-weight:600;font-size:.875rem;text-decoration:none;border:none;cursor:pointer;font-family:inherit;transition:all .22s}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;box-shadow:0 4px 20px rgba(45,212,191,.25)}[data-theme=light] .btn-primary{color:#fff}.btn-primary:hover{transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-nav,.btn-login{background:var(--bg-card-solid);color:var(--text);border:1px solid var(--border);padding:.5rem 1.1rem;font-size:.85rem}.btn-nav:hover,.btn-login:hover{border-color:var(--cyan);color:var(--cyan)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:1.5rem}.modal-overlay.open{display:flex}
+.modal{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:400px;box-shadow:var(--shadow);position:relative}
+.modal h3{font-size:1.25rem;font-weight:700;margin-bottom:.4rem}.modal .modal-sub{font-size:.875rem;color:var(--text-muted);margin-bottom:1.5rem}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1.4rem}.modal input{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:.7rem .95rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none;margin-bottom:1rem}.modal input:focus{border-color:var(--cyan)}.modal .btn-primary{width:100%}.modal-footer-text{text-align:center;font-size:.8rem;color:var(--text-dim);margin-top:1.2rem}.modal-footer-text a{color:var(--cyan);text-decoration:none}
+.hero{min-height:100vh;padding:110px 2rem 70px;display:flex;align-items:center;position:relative;z-index:1;background-image:linear-gradient(105deg,rgba(7,13,24,.92) 0%,rgba(7,13,24,.78) 42%,rgba(7,13,24,.4) 100%),url('hero-bg.jpg');background-size:cover;background-position:center right;background-repeat:no-repeat}
+[data-theme=light] .hero{background-image:linear-gradient(105deg,rgba(248,250,252,.93) 0%,rgba(248,250,252,.8) 42%,rgba(248,250,252,.45) 100%),url('hero-bg.jpg')}
+.hero-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;align-items:center;gap:3.5rem;position:relative;z-index:1}
+.hero-content{flex:1;max-width:540px}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:.7rem;font-weight:600;padding:.35rem .85rem;border-radius:999px;margin-bottom:1.4rem;letter-spacing:.6px;text-transform:uppercase}
+.hero h1{font-size:3.1rem;font-weight:800;line-height:1.12;letter-spacing:-1.4px;margin-bottom:1.2rem}.hero h1 .highlight{background:linear-gradient(135deg,var(--cyan),#5eead4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-content>p{color:var(--text-muted);font-size:1.05rem;margin-bottom:1.9rem;line-height:1.75}
+.hero-buttons{display:flex;gap:.7rem;margin-bottom:1.8rem;flex-wrap:wrap}.hero-checks{display:flex;flex-wrap:wrap;gap:.9rem 1.4rem;font-size:.82rem;color:var(--text-muted)}.hero-checks span{display:flex;align-items:center;gap:.35rem}.hero-checks svg{width:15px;height:15px;color:var(--green)}
+.hero-visual{flex:1;display:flex;justify-content:center}.monitor-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;width:100%;max-width:400px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+.monitor-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem}.monitor-title{font-size:.7rem;font-weight:600;color:var(--text-muted)}.status-dot{display:flex;align-items:center;gap:.35rem;font-size:.65rem;font-weight:600;color:var(--green)}.status-dot::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.monitor-card h3{font-size:1.25rem;font-weight:700;margin-bottom:.2rem}.monitor-sub{font-size:.65rem;color:var(--text-dim);letter-spacing:1.2px;margin-bottom:1.1rem}.chart-area{height:130px;margin-bottom:1.1rem}.chart-area svg{width:100%;height:100%}
+.monitor-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.stat-box{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:.65rem .4rem;text-align:center}.stat-box .label{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:.15rem}.stat-box .value{font-size:.85rem;font-weight:700;color:var(--cyan)}
+.feature-bar{background:var(--bg-elevated);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.4rem 2rem;position:relative;z-index:1}.feature-bar-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}.feature-bar-item{text-align:center}.feature-bar-item h4{font-size:.9rem;font-weight:600}.feature-bar-item p{font-size:.78rem;color:var(--text-dim)}
+.video-section{padding:5rem 2rem;position:relative;z-index:1}.video-wrap{max-width:900px;margin:0 auto}.video-frame{position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);background:var(--bg-card-solid)}.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.video-caption{text-align:center;margin-top:1.25rem;font-size:.9rem;color:var(--text-muted)}
+section{padding:5rem 2rem;position:relative;z-index:1}.container{max-width:1080px;margin:0 auto}.section-label{font-size:.7rem;font-weight:600;color:var(--cyan);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:.7rem}.section-title{font-size:2.3rem;font-weight:800;letter-spacing:-1.1px;margin-bottom:.7rem;line-height:1.2}.section-desc{color:var(--text-muted);font-size:1.02rem;max-width:560px;margin-bottom:2.8rem;line-height:1.7}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.8rem}.why-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;transition:all .25s}.why-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}.why-icon{width:38px;height:38px;border-radius:10px;background:rgba(45,212,191,.1);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;font-size:.8rem;font-weight:700;color:var(--cyan)}.why-card h3{font-size:1rem;font-weight:700;margin-bottom:.4rem}.why-card p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+.disclaimer-box{background:rgba(251,191,36,.06);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:1rem 1.2rem;font-size:.85rem;color:var(--text-muted)}.disclaimer-box strong{color:var(--yellow)}
+.eco-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}.eco-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;transition:all .25s}.eco-card:hover{border-color:var(--border-hover);transform:translateY(-3px)}.eco-icon{width:38px;height:38px;border-radius:10px;background:rgba(45,212,191,.1);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;font-size:.75rem;font-weight:700;color:var(--cyan)}.eco-card h3{font-size:1rem;font-weight:700;margin-bottom:.35rem}.eco-card p{font-size:.82rem;color:var(--text-muted)}
+.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.4rem}.perf-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;position:relative;overflow:hidden;transition:transform .25s}.perf-card:hover{transform:translateY(-2px)}.perf-card.basic{border-color:rgba(45,212,191,.25)}.perf-card.gold{border-color:rgba(245,158,11,.3)}.perf-card.pro{border-color:rgba(167,139,250,.3)}.perf-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}.perf-card.basic::before{background:linear-gradient(90deg,transparent,var(--cyan),transparent)}.perf-card.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)}.perf-card.pro::before{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.perf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem}.perf-label{font-size:.65rem;font-weight:700;letter-spacing:1.2px;color:var(--cyan)}.perf-card.gold .perf-label{color:var(--gold)}.perf-card.pro .perf-label{color:var(--purple)}.mt5-badge{font-size:.6rem;font-weight:600;background:rgba(52,211,153,.12);color:var(--green);padding:.2rem .45rem;border-radius:5px}
+.perf-account{font-size:1.1rem;font-weight:700;margin-bottom:.9rem;display:flex;align-items:center;gap:.45rem}.online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}.online-text{font-size:.65rem;color:var(--green);font-weight:600}
+.perf-stats{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.9rem}.perf-stat{background:var(--input-bg);border-radius:10px;padding:.65rem .7rem}.perf-stat .label{font-size:.65rem;color:var(--text-dim);margin-bottom:.15rem}.perf-stat .value{font-size:.95rem;font-weight:700}.perf-stat .value.profit{color:var(--green)}
+.daily-return{background:rgba(52,211,153,.08);border-radius:10px;padding:.65rem .9rem;display:flex;justify-content:space-between;align-items:center}.daily-return .label{font-size:.72rem;color:var(--text-muted)}.daily-return .value{font-size:1.05rem;font-weight:700;color:var(--green)}
+.info-box{background:rgba(251,191,36,.06);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:1rem 1.2rem;font-size:.78rem;color:var(--text-muted)}.info-box strong{color:var(--yellow)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}.testi-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}.testi-stars{color:var(--gold);font-size:.85rem;letter-spacing:2px;margin-bottom:.75rem}.testi-card p{font-size:.9rem;color:var(--text-muted);line-height:1.65;margin-bottom:1.1rem}.testi-author{display:flex;align-items:center;gap:.75rem}.testi-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#042f2e}.testi-name{font-size:.875rem;font-weight:600}.testi-role{font-size:.75rem;color:var(--text-dim)}
+.faq-list{max-width:720px;display:flex;flex-direction:column;gap:.6rem}.faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden}.faq-item.active{border-color:var(--border-hover)}.faq-q{width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:.95rem;font-weight:600;text-align:left;padding:1.1rem 1.3rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem}.faq-icon{width:20px;height:20px;flex-shrink:0;transition:transform .25s;color:var(--text-dim)}.faq-item.active .faq-icon{transform:rotate(180deg);color:var(--cyan)}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s;padding:0 1.3rem}.faq-item.active .faq-a{max-height:200px;padding:0 1.3rem 1.1rem}.faq-a p{font-size:.875rem;color:var(--text-muted);line-height:1.65}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2.2rem}.step-num{font-size:2.4rem;font-weight:800;color:var(--text-dim);opacity:.25;margin-bottom:.4rem;line-height:1}.step h3{font-size:1.1rem;font-weight:700;margin-bottom:.35rem}.step p{font-size:.88rem;color:var(--text-muted)}
+.cta-section{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}.cta-content .section-title{font-size:2.1rem}.form-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.8rem;box-shadow:var(--shadow)}.form-card h3{font-size:1.1rem;font-weight:700;margin-bottom:1.4rem}.form-group{margin-bottom:1rem}.form-group label{display:block;font-size:.78rem;font-weight:500;color:var(--text-muted);margin-bottom:.35rem}.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:.7rem .95rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--cyan)}.form-group select{appearance:none;cursor:pointer}.form-group textarea{resize:vertical;min-height:76px}.form-submit{width:100%;margin-top:.4rem;padding:.85rem}
+footer{border-top:1px solid var(--border);padding:3.5rem 2rem 2rem;position:relative;z-index:1;background:var(--bg-elevated)}.footer-grid{max-width:1080px;margin:0 auto 2.5rem;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2.5rem}.footer-brand .logo{margin-bottom:.9rem;display:inline-flex}.footer-brand p{font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:280px}.footer-col h4{font-size:.8rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:1rem}.footer-col a{display:block;font-size:.875rem;color:var(--text-muted);text-decoration:none;margin-bottom:.55rem}.footer-col a:hover{color:var(--cyan)}.footer-bottom{max-width:1080px;margin:0 auto;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}.footer-bottom p{font-size:.75rem;color:var(--text-dim);max-width:560px;line-height:1.6}.footer-social{display:flex;gap:.75rem}.footer-social a{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);text-decoration:none;font-size:.85rem}.footer-social a:hover{border-color:var(--cyan);color:var(--cyan)}
+.wa-float{position:fixed;bottom:1.4rem;right:1.4rem;z-index:999;background:#25d366;color:#fff;padding:.65rem 1.15rem;border-radius:999px;display:flex;align-items:center;gap:.45rem;font-weight:600;font-size:.82rem;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.35)}.wa-float svg{width:20px;height:20px}
+#back-top{position:fixed;bottom:5.5rem;right:1.5rem;z-index:998;width:42px;height:42px;border-radius:50%;background:var(--bg-card-solid);border:1px solid var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;visibility:hidden;transition:all .25s}#back-top.visible{opacity:1;visibility:visible}#back-top:hover{border-color:var(--cyan);color:var(--cyan)}
+@media(max-width:960px){.hero-inner{flex-direction:column;text-align:center;gap:2.5rem}.hero{padding-top:100px}.hero-content{max-width:100%}.hero h1{font-size:2.4rem}.hero-buttons,.hero-checks{justify-content:center}.nav-links{display:none}.hamburger{display:flex}.feature-bar-inner{grid-template-columns:repeat(2,1fr)}.why-grid,.perf-grid,.testi-grid,.steps-grid{grid-template-columns:1fr}.eco-grid{grid-template-columns:repeat(2,1fr)}.cta-section{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.hero h1{font-size:1.95rem}.section-title{font-size:1.7rem}.feature-bar-inner,.eco-grid{grid-template-columns:1fr}.navbar{padding:0 1.2rem}section{padding:3.5rem 1.2rem}.footer-grid{grid-template-columns:1fr}.footer-bottom{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+<nav class="navbar">
+<a href="#" class="logo">SMART<span>AI</span></a>
+<ul class="nav-links">
+<li><a href="#video">Video</a></li>
+<li><a href="#kelebihan">Kelebihan</a></li>
+<li><a href="#produk">Produk</a></li>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#testimoni">Testimoni</a></li>
+<li><a href="#faq">FAQ</a></li>
+<li><a href="#cara-join">Cara Join</a></li>
+</ul>
+<div class="nav-actions">
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+<svg class="icon-moon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="icon-sun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+<button class="btn btn-login" onclick="openLogin()">Login</button>
+<a href="#daftar" class="btn btn-nav">Daftar Minat</a>
+<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+<a href="#video" onclick="closeMenu()">Video</a>
+<a href="#kelebihan" onclick="closeMenu()">Kelebihan</a>
+<a href="#produk" onclick="closeMenu()">Produk</a>
+<a href="#performance" onclick="closeMenu()">Performance</a>
+<a href="#testimoni" onclick="closeMenu()">Testimoni</a>
+<a href="#faq" onclick="closeMenu()">FAQ</a>
+<a href="#cara-join" onclick="closeMenu()">Cara Join</a>
+<button class="btn btn-login" onclick="closeMenu();openLogin()">Login</button>
+<a href="#daftar" class="btn btn-primary" onclick="closeMenu()">Daftar Minat</a>
+</div>
+<div class="modal-overlay" id="login-modal">
+<div class="modal">
+<button class="modal-close" onclick="closeLogin()">&times;</button>
+<h3>Masuk ke Smart AI</h3>
+<p class="modal-sub">Akses dashboard member, monitoring akun, dan update sistem.</p>
+<form onsubmit="handleLogin(event)">
+<label style="display:block;font-size:.78rem;color:var(--text-muted);margin-bottom:.35rem">Email atau WhatsApp</label>
+<input type="text" placeholder="email@contoh.com / 08xxxxxxxxxx" required/>
+<label style="display:block;font-size:.78rem;color:var(--text-muted);margin-bottom:.35rem">Password</label>
+<input type="password" placeholder="••••••••" required/>
+<button type="submit" class="btn btn-primary">Masuk</button>
+</form>
+<p class="modal-footer-text">Belum punya akun? <a href="#daftar" onclick="closeLogin()">Daftar minat dulu</a></p>
+</div>
+</div>
+<section class="hero">
+<div class="hero-inner">
+<div class="hero-content">
+<div class="badge">⚡ Trading Automation yang Terukur</div>
+<h1>Biarkan sistem bekerja.<br><span class="highlight">Anda yang kendalikan.</span></h1>
+<p>Smart AI menyatukan EA Trading, monitoring real-time, dan kontrol risiko dalam satu ekosistem yang simpel. Eksekusi otomatis — keputusan tetap di tangan Anda.</p>
+<div class="hero-buttons">
+<a href="#daftar" class="btn btn-primary">Mulai Sekarang →</a>
+<a href="#video" class="btn btn-outline">Tonton Video</a>
+</div>
+<div class="hero-checks">
+<span><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Automation 24/5</span>
+<span><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Live Monitoring</span>
+<span><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Risk Control</span>
+<span><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Setup Simpel</span>
+</div>
+</div>
+<div class="hero-visual">
+<div class="monitor-card">
+<div class="monitor-header"><span class="monitor-title">SMART AI • MONITOR</span><span class="status-dot">SYSTEM ACTIVE</span></div>
+<h3>Real-Time Monitor</h3>
+<div class="monitor-sub">BALANCE • EQUITY • PERFORMANCE • RISK</div>
+<div class="chart-area"><svg viewBox="0 0 360 130" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd4bf" stop-opacity=".28"/><stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient></defs><path d="M0,105 C30,100 50,90 80,85 C110,80 130,65 160,58 C190,52 210,42 240,32 C270,22 300,18 330,12 L360,8 L360,130 L0,130 Z" fill="url(#g)"/><path d="M0,105 C30,100 50,90 80,85 C110,80 130,65 160,58 C190,52 210,42 240,32 C270,22 300,18 330,12 L360,8" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+<div class="monitor-stats"><div class="stat-box"><div class="label">Automation</div><div class="value">24/5</div></div><div class="stat-box"><div class="label">Monitor</div><div class="value">Real-time</div></div><div class="stat-box"><div class="label">Control</div><div class="value">Smart Risk</div></div></div>
+</div>
+</div>
+</div>
+</section>
+<div class="feature-bar"><div class="feature-bar-inner"><div class="feature-bar-item"><h4>EA Automation</h4><p>Eksekusi tanpa emosi</p></div><div class="feature-bar-item"><h4>Smart Risk</h4><p>Parameter di tangan Anda</p></div><div class="feature-bar-item"><h4>Live Monitor</h4><p>Pantau kapan saja</p></div><div class="feature-bar-item"><h4>Member Support</h4><p>Belajar & diskusi</p></div></div></div>
+<section class="video-section" id="video">
+<div class="container" style="text-align:center;margin-bottom:2.2rem">
+<div class="section-label">Lihat Smart AI</div>
+<h2 class="section-title" style="margin-left:auto;margin-right:auto">Bagaimana sistemnya bekerja</h2>
+<p class="section-desc" style="margin-left:auto;margin-right:auto;margin-bottom:0">Tonton penjelasan singkat tentang ekosistem Smart AI.</p>
+</div>
+<div class="video-wrap">
+<div class="video-frame">
+<iframe src="https://www.youtube.com/embed/WFI02tyEHu4?rel=0&modestbranding=1" title="Smart AI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+</div>
+<p class="video-caption">Video overview Smart AI · Klik play untuk menonton</p>
+</div>
+</section>
+<section id="kelebihan"><div class="container"><div class="section-label">Mengapa Smart AI?</div><h2 class="section-title">Bukan sekadar robot.<br>Ini ekosistem trading.</h2><p class="section-desc">Dirancang agar Anda fokus pada keputusan strategis, sementara sistem menangani eksekusi, monitoring, dan disiplin risiko.</p>
+<div class="why-grid">
+<div class="why-card"><div class="why-icon">AI</div><h3>Automation 24/5</h3><p>EA menjalankan aturan trading secara otomatis selama terminal aktif.</p></div>
+<div class="why-card"><div class="why-icon">◎</div><h3>Monitoring Transparan</h3><p>Lihat balance, equity, profit, dan aktivitas sistem secara real-time.</p></div>
+<div class="why-card"><div class="why-icon">◇</div><h3>Risk Control</h3><p>Atur lot, target, dan batas kerugian sesuai profil risiko Anda.</p></div>
+<div class="why-card"><div class="why-icon">⚙</div><h3>Setting Simpel</h3><p>Tidak perlu jadi programmer. Parameter utama mudah diatur.</p></div>
+<div class="why-card"><div class="why-icon">⇄</div><h3>Multi Strategy</h3><p>Beberapa EA dan pendekatan tersedia dalam satu ekosistem.</p></div>
+<div class="why-card"><div class="why-icon">↗</div><h3>Terus Berkembang</h3><p>Roadmap akun pantau, copy trade, dashboard member, dan komunitas.</p></div>
+</div>
+<div class="disclaimer-box"><strong>Catatan penting:</strong> Smart AI bukan janji “pasti profit”. Nilainya adalah automation + monitoring + risk control.</div></div></section>
+<section id="produk" style="padding-top:1.5rem"><div class="container"><div class="section-label">Smart Ecosystem</div><h2 class="section-title">Satu tempat. Beberapa solusi.</h2>
+<div class="eco-grid">
+<div class="eco-card"><div class="eco-icon">EA</div><h3>EA Trading</h3><p>Sistem otomatis dengan kontrol risiko yang dapat disesuaikan.</p></div>
+<div class="eco-card"><div class="eco-icon">↗</div><h3>Copy Trade</h3><p>Akses strategi copy trading dalam ekosistem Smart AI.</p></div>
+<div class="eco-card"><div class="eco-icon">◎</div><h3>Akun Pantau</h3><p>Dashboard kondisi dan performance akun secara real-time.</p></div>
+<div class="eco-card"><div class="eco-icon">◈</div><h3>Community</h3><p>Update sistem, panduan, edukasi, dan diskusi member.</p></div>
+</div></div></section>
+<section id="performance"><div class="container"><div class="section-label">Live Performance</div><h2 class="section-title">Data aktual. Bukan sekadar janji.</h2><p class="section-desc">Pantau performa akun Smart Basic, Smart Gold, dan Smart Pro.</p>
+<div class="perf-grid">
+<div class="perf-card basic"><div class="perf-header"><span class="perf-label">SMART BASIC</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC01 <span class="online-dot"></span> <span class="online-text">ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit Awal</div><div class="value">$10,000.00</div></div><div class="perf-stat"><div class="label">Equity Saat Ini</div><div class="value counter" data-target="76999.66" data-prefix="$">$0</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit counter" data-target="100.80" data-prefix="+$">+$0</div></div><div class="perf-stat"><div class="label">Total Penarikan</div><div class="value">$73,862.00</div></div></div><div class="daily-return"><span class="label">Daily Return</span><span class="value">+0.13%</span></div></div>
+<div class="perf-card gold"><div class="perf-header"><span class="perf-label">SMART GOLD</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC02 <span class="online-dot"></span> <span class="online-text">ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit Awal</div><div class="value">$10,000.00</div></div><div class="perf-stat"><div class="label">Equity Saat Ini</div><div class="value counter" data-target="102254.66" data-prefix="$">$0</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit counter" data-target="40.30" data-prefix="+$">+$0</div></div><div class="perf-stat"><div class="label">Total Penarikan</div><div class="value">$28,000.00</div></div></div><div class="daily-return"><span class="label">Daily Return</span><span class="value">+0.04%</span></div></div>
+<div class="perf-card pro"><div class="perf-header"><span class="perf-label">SMART PRO</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC03 <span class="online-dot"></span> <span class="online-text">ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit Awal</div><div class="value">$60,000.00</div></div><div class="perf-stat"><div class="label">Equity Saat Ini</div><div class="value counter" data-target="625625" data-prefix="$">$0</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit counter" data-target="1378.20" data-prefix="+$">+$0</div></div><div class="perf-stat"><div class="label">Total Penarikan</div><div class="value">$5,540,000.00</div></div></div><div class="daily-return"><span class="label">Daily Return</span><span class="value">+0.22%</span></div></div>
+</div>
+<div class="info-box"><strong>Informasi:</strong> Daily Return = Daily Profit ÷ Equity × 100%. Trading memiliki risiko kerugian.</div></div></section>
+<section id="testimoni"><div class="container"><div class="section-label">Testimoni Member</div><h2 class="section-title">Dari yang sudah mencoba.</h2>
+<div class="testi-grid">
+<div class="testi-card"><div class="testi-stars">★★★★★</div><p>"Setup simpel, monitoring transparan. Bisa pantau equity real-time tanpa duduk di depan chart seharian."</p><div class="testi-author"><div class="testi-avatar">AR</div><div><div class="testi-name">Andi R.</div><div class="testi-role">Member Smart Gold</div></div></div></div>
+<div class="testi-card"><div class="testi-stars">★★★★★</div><p>"Risk control jelas, parameter bisa disesuaikan. Bukan janji profit — sistemnya terukur."</p><div class="testi-author"><div class="testi-avatar">SW</div><div><div class="testi-name">Sari W.</div><div class="testi-role">Member Smart Basic</div></div></div></div>
+<div class="testi-card"><div class="testi-stars">★★★★☆</div><p>"Support komunitas aktif. Update rutin dan panduan step-by-step membantu pemula."</p><div class="testi-author"><div class="testi-avatar">BP</div><div><div class="testi-name">Budi P.</div><div class="testi-role">Member Smart Pro</div></div></div></div>
+</div></div></section>
+<section id="faq"><div class="container"><div class="section-label">FAQ</div><h2 class="section-title">Pertanyaan yang sering muncul.</h2>
+<div class="faq-list">
+<div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah Smart AI menjamin profit?<svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><p>Tidak. Fokusnya pada automation, monitoring, dan risk control. Trading selalu berisiko.</p></div></div>
+<div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Platform apa yang digunakan?<svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><p>MetaTrader 5 (MT5). EA dipasang di terminal Anda dan dipantau real-time.</p></div></div>
+<div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah harus selalu online?<svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><p>EA berjalan saat terminal aktif. VPS direkomendasikan untuk 24/5.</p></div></div>
+<div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Bagaimana cara memulai?<svg class="faq-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><p>Isi form daftar minat, tim menghubungi via WhatsApp, lalu lanjut setup jika cocok.</p></div></div>
+</div></div></section>
+<section id="cara-join"><div class="container"><div class="section-label">Cara Bergabung</div><h2 class="section-title">Tiga langkah sederhana.</h2>
+<div class="steps-grid"><div class="step"><div class="step-num">01</div><h3>Isi Data</h3><p>Tinggalkan nama, WhatsApp, dan minat Anda.</p></div><div class="step"><div class="step-num">02</div><h3>Kami Hubungi</h3><p>Tim menjelaskan sistem dan menjawab pertanyaan.</p></div><div class="step"><div class="step-num">03</div><h3>Pilih & Mulai</h3><p>Jika sesuai, lanjutkan setup Smart AI.</p></div></div></div></section>
+<section id="daftar"><div class="container"><div class="cta-section">
+<div class="cta-content"><div class="section-label">Early Access</div><h2 class="section-title">Penasaran bagaimana sistemnya bekerja?</h2><p class="section-desc">Tinggalkan data Anda. Tim siap menjelaskan tanpa tekanan membeli.</p><div class="disclaimer-box"><strong>Early Member:</strong> daftar lebih awal untuk info fitur dan akses prioritas.</div></div>
+<div class="form-card"><h3>Daftar Minat Smart AI</h3>
+<form id="interest-form" onsubmit="handleSubmit(event)">
+<div class="form-group"><label>Nama *</label><input type="text" placeholder="Nama lengkap" required/></div>
+<div class="form-group"><label>WhatsApp *</label><input type="tel" placeholder="0812xxxxxxxx" required/></div>
+<div class="form-group"><label>Email</label><input type="email" placeholder="nama@email.com"/></div>
+<div class="form-group"><label>Tertarik dengan</label><select><option>EA Trading</option><option>Copy Trade</option><option>Akun Pantau</option><option>Semua layanan</option></select></div>
+<div class="form-group"><label>Pesan</label><textarea placeholder="Ada yang ingin ditanyakan?"></textarea></div>
+<button type="submit" class="btn btn-primary form-submit">Kirim & Minta Dihubungi →</button>
+</form>
+<div id="form-success" style="display:none;text-align:center;padding:2rem 0;color:var(--green);font-weight:600">✓ Data terkirim. Tim akan segera menghubungi Anda.</div>
+</div></div></div></section>
+<footer>
+<div class="footer-grid">
+<div class="footer-brand"><a href="#" class="logo">SMART<span>AI</span></a><p>Ekosistem trading automation dengan monitoring transparan dan kontrol risiko.</p></div>
+<div class="footer-col"><h4>Produk</h4><a href="#produk">EA Trading</a><a href="#produk">Copy Trade</a><a href="#produk">Akun Pantau</a></div>
+<div class="footer-col"><h4>Perusahaan</h4><a href="#video">Video</a><a href="#kelebihan">Tentang</a><a href="#faq">FAQ</a></div>
+<div class="footer-col"><h4>Dukungan</h4><a href="#daftar">Daftar Minat</a><a href="https://wa.me/6282137585596" target="_blank">WhatsApp</a><a href="#" onclick="openLogin();return false">Login</a></div>
+</div>
+<div class="footer-bottom">
+<p>Risk Disclosure: Trading memiliki risiko kerugian. Hasil historis bukan jaminan hasil di masa depan.</p>
+<div class="footer-social"><a href="https://wa.me/6282137585596" target="_blank">WA</a><a href="#">TG</a><a href="#">IG</a></div>
+</div>
+</footer>
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
+<a href="https://wa.me/6282137585596" class="wa-float" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.371-.01-.57-.01-.78-.01-.209 0-1.612.79-1.612 1.566 0 .92.67 1.812.76 1.937.09.126 1.34 2.047 3.25 2.848.45.195.8.31 1.07.4.45.145.86.124 1.18.075.36-.055 1.11-.454 1.27-.89.16-.436.16-.81.11-.89-.05-.08-.19-.13-.4-.22z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 20.2a1 1 0 001.21 1.25l3.2-.85A9.96 9.96 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg> WHATSAPP</a>
+<script>
+const html=document.documentElement;const saved=localStorage.getItem('theme');if(saved)html.setAttribute('data-theme',saved);
+document.getElementById('theme-toggle').addEventListener('click',()=>{const n=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',n);localStorage.setItem('theme',n);});
+function openLogin(){document.getElementById('login-modal').classList.add('open');document.body.style.overflow='hidden';}
+function closeLogin(){document.getElementById('login-modal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('login-modal').addEventListener('click',e=>{if(e.target.id==='login-modal')closeLogin();});
+function handleLogin(e){e.preventDefault();closeLogin();alert('Fitur login member akan segera tersedia.');}
+const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobile-menu');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');mobileMenu.classList.toggle('open');document.body.style.overflow=mobileMenu.classList.contains('open')?'hidden':'';});
+function closeMenu(){hamburger.classList.remove('active');mobileMenu.classList.remove('open');document.body.style.overflow='';}
+const progressBar=document.getElementById('scroll-progress'),backTop=document.getElementById('back-top');
+window.addEventListener('scroll',()=>{const s=window.scrollY,d=document.documentElement.scrollHeight-window.innerHeight;progressBar.style.width=(s/d*100)+'%';backTop.classList.toggle('visible',s>400);});
+function toggleFaq(btn){const item=btn.parentElement,was=item.classList.contains('active');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('active'));if(!was)item.classList.add('active');}
+function animateCounters(){document.querySelectorAll('.counter').forEach(el=>{const target=parseFloat(el.dataset.target),prefix=el.dataset.prefix||'',start=performance.now(),isInt=Number.isInteger(target);function update(now){const t=Math.min((now-start)/1500,1),eased=1-Math.pow(1-t,3),val=target*eased;el.textContent=prefix+(isInt?Math.round(val).toLocaleString('en-US'):val.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}));if(t<1)requestAnimationFrame(update);}requestAnimationFrame(update);});}
+let countersDone=false;new IntersectionObserver(e=>{if(e[0].isIntersecting&&!countersDone){countersDone=true;animateCounters();}},{threshold:.3}).observe(document.getElementById('performance'));
+function handleSubmit(e){e.preventDefault();document.getElementById('interest-form').style.display='none';document.getElementById('form-success').style.display='block';}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){const h=this.getAttribute('href');if(h==='#')return;e.preventDefault();const t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});});
+</script>
+</body>
+</html>

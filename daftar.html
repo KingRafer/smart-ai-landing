@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Daftar Minat — Smart AI</title>
+<meta name="description" content="Daftarkan minat Anda untuk Smart AI. Tim kami akan menghubungi tanpa tekanan."/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme=dark]{--bg:#070d18;--bg-card:#0f192d;--border:rgba(94,234,212,.12);--cyan:#2dd4bf;--teal:#14b8a6;--green:#34d399;--text:#f1f5f9;--text-muted:#94a3b8;--text-dim:#64748b;--yellow:#fbbf24;--input-bg:rgba(255,255,255,.03);--input-border:rgba(255,255,255,.08);--nav-bg:rgba(7,13,24,.9);--shadow:0 25px 50px -12px rgba(0,0,0,.55)}
+[data-theme=light]{--bg:#f8fafc;--bg-card:#fff;--border:rgba(15,23,42,.08);--cyan:#0d9488;--teal:#0f766e;--green:#059669;--text:#0f172a;--text-muted:#475569;--text-dim:#94a3b8;--yellow:#d97706;--input-bg:rgba(15,23,42,.03);--input-border:rgba(15,23,42,.1);--nav-bg:rgba(248,250,252,.95);--shadow:0 20px 40px -12px rgba(15,23,42,.12)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;transition:background .3s,color .3s}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(45,212,191,.07),transparent);pointer-events:none;z-index:0}
+.navbar{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:800;color:var(--text);text-decoration:none}.logo span{color:var(--cyan)}
+.nav-right{display:flex;align-items:center;gap:.6rem}
+.theme-toggle{width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}.theme-toggle:hover{border-color:var(--cyan);color:var(--cyan)}.theme-toggle .icon-sun{display:none}[data-theme=light] .theme-toggle .icon-moon{display:none}[data-theme=light] .theme-toggle .icon-sun{display:block}
+.btn-back{color:var(--text-muted);text-decoration:none;font-size:.875rem;font-weight:500}.btn-back:hover{color:var(--cyan)}
+.page{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:3rem 1.5rem 4rem;display:grid;grid-template-columns:1fr 1.1fr;gap:3rem;align-items:start}
+@media(max-width:800px){.page{grid-template-columns:1fr;gap:2rem;padding-top:2rem}}
+.side-label{font-size:.7rem;font-weight:600;color:var(--cyan);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:.75rem}
+.side-title{font-size:2rem;font-weight:800;letter-spacing:-.8px;line-height:1.2;margin-bottom:1rem}
+.side-desc{color:var(--text-muted);font-size:1rem;line-height:1.7;margin-bottom:1.5rem}
+.side-box{background:rgba(251,191,36,.06);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:1rem 1.15rem;font-size:.875rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem}.side-box strong{color:var(--yellow)}
+.side-points{list-style:none;display:flex;flex-direction:column;gap:.75rem}.side-points li{display:flex;align-items:flex-start;gap:.6rem;font-size:.9rem;color:var(--text-muted)}.side-points svg{width:18px;height:18px;color:var(--green);flex-shrink:0;margin-top:2px}
+.form-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2rem;box-shadow:var(--shadow)}
+.form-card h1{font-size:1.35rem;font-weight:700;margin-bottom:.35rem}.form-card .sub{font-size:.875rem;color:var(--text-muted);margin-bottom:1.6rem}
+.form-group{margin-bottom:1.1rem}.form-group label{display:block;font-size:.8rem;font-weight:500;color:var(--text-muted);margin-bottom:.4rem}.form-group label .req{color:var(--cyan)}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:.75rem 1rem;color:var(--text);font-size:.9rem;font-family:inherit;outline:none;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--cyan)}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text-dim)}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;cursor:pointer}.form-group select option{background:var(--bg-card);color:var(--text)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+.btn-submit{width:100%;margin-top:.5rem;padding:.9rem 1.5rem;border:none;border-radius:999px;font-weight:600;font-size:.95rem;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;box-shadow:0 4px 20px rgba(45,212,191,.25);transition:transform .2s,box-shadow .2s}[data-theme=light] .btn-submit{color:#fff}.btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(45,212,191,.35)}.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.form-note{text-align:center;font-size:.75rem;color:var(--text-dim);margin-top:1rem;line-height:1.5}
+.success-box{display:none;text-align:center;padding:2.5rem 1rem}.success-box.show{display:block}
+.success-icon{width:56px;height:56px;border-radius:50%;background:rgba(52,211,153,.15);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.5rem}
+.success-box h2{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}.success-box p{color:var(--text-muted);font-size:.9rem;line-height:1.6;margin-bottom:1.5rem}.success-box a{color:var(--cyan);text-decoration:none;font-weight:600;font-size:.9rem}.success-box a:hover{text-decoration:underline}
+footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--text-dim);position:relative;z-index:1}footer a{color:var(--text-muted);text-decoration:none}footer a:hover{color:var(--cyan)}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<a href="index.html" class="logo">SMART<span>AI</span></a>
+<div class="nav-right">
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+<svg class="icon-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="icon-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+</button>
+<a href="index.html" class="btn-back">← Kembali</a>
+</div>
+</nav>
+<div class="page">
+<aside>
+<div class="side-label">Early Access</div>
+<h2 class="side-title">Penasaran bagaimana sistemnya bekerja?</h2>
+<p class="side-desc">Tinggalkan data Anda. Tim Smart AI siap menjelaskan sistem tanpa tekanan untuk langsung membeli.</p>
+<div class="side-box"><strong>Early Member:</strong> daftar lebih awal untuk menerima info fitur dan akses prioritas.</div>
+<ul class="side-points">
+<li><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Tidak ada kewajiban membeli saat konsultasi awal</li>
+<li><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Tim menghubungi via WhatsApp</li>
+<li><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Penjelasan sistem & pilihan layanan</li>
+</ul>
+</aside>
+<div class="form-card">
+<div id="form-view">
+<h1>Daftar Minat Smart AI</h1>
+<p class="sub">Isi formulir di bawah. Kami akan segera menghubungi Anda.</p>
+<form id="interest-form" onsubmit="handleSubmit(event)">
+<div class="form-group"><label>Nama lengkap <span class="req">*</span></label><input type="text" name="nama" placeholder="Nama Anda" required autocomplete="name"/></div>
+<div class="form-row">
+<div class="form-group"><label>Nomor WhatsApp <span class="req">*</span></label><input type="tel" name="wa" placeholder="0812xxxxxxxx" required pattern="[0-9]{10,15}" autocomplete="tel"/></div>
+<div class="form-group"><label>Email</label><input type="email" name="email" placeholder="nama@email.com" autocomplete="email"/></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>Saya tertarik dengan</label><select name="minat"><option>EA Trading / Robot Trading</option><option>Copy Trade</option><option>Akun Pantau</option><option>Semua layanan</option></select></div>
+<div class="form-group"><label>Pengalaman trading</label><select name="pengalaman"><option>Pemula</option><option>Menengah</option><option>Berpengalaman</option></select></div>
+</div>
+<div class="form-group"><label>Pesan / pertanyaan</label><textarea name="pesan" placeholder="Ada yang ingin ditanyakan? (opsional)"></textarea></div>
+<button type="submit" class="btn-submit" id="submit-btn">Kirim & Minta Dihubungi →</button>
+<p class="form-note">Dengan mengirim formulir ini, Anda setuju dihubungi oleh tim Smart AI terkait layanan kami.</p>
+</form>
+</div>
+<div class="success-box" id="success-view">
+<div class="success-icon">✓</div>
+<h2>Data berhasil dikirim</h2>
+<p>Terima kasih. Tim kami akan segera menghubungi Anda melalui WhatsApp untuk menjelaskan sistem Smart AI.</p>
+<a href="index.html">← Kembali ke beranda</a>
+</div>
+</div>
+</div>
+<footer><a href="index.html">Smart AI</a> · Risk Disclosure: Trading memiliki risiko kerugian.</footer>
+<script>
+const html=document.documentElement;const saved=localStorage.getItem('theme');if(saved)html.setAttribute('data-theme',saved);
+document.getElementById('theme-toggle').addEventListener('click',()=>{const n=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',n);localStorage.setItem('theme',n);});
+function handleSubmit(e){e.preventDefault();const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='Mengirim...';const data=new FormData(e.target);const nama=data.get('nama')||'';const wa=data.get('wa')||'';const minat=data.get('minat')||'';const pengalaman=data.get('pengalaman')||'';const pesan=data.get('pesan')||'';const text=encodeURIComponent('Halo Admin Smart AI, saya ingin daftar minat.\n\nNama: '+nama+'\nWhatsApp: '+wa+'\nMinat: '+minat+'\nPengalaman: '+pengalaman+(pesan?'\nPesan: '+pesan:''));setTimeout(()=>{document.getElementById('form-view').style.display='none';document.getElementById('success-view').classList.add('show');window.open('https://wa.me/6282137585596?text='+text,'_blank');},600);}
+</script>
+</body>
+</html>

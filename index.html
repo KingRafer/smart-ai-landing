@@ -1,1 +1,312 @@
-PLACEHOLDER_WILL_FAIL
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Smart AI — Trading Automation</title>
+<meta name="theme-color" content="#070d18"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme=dark]{--bg:#070d18;--bg-elevated:#0c1424;--bg-card:rgba(15,25,45,.75);--bg-card-solid:#0f192d;--border:rgba(94,234,212,.12);--cyan:#2dd4bf;--teal:#14b8a6;--green:#34d399;--text:#f1f5f9;--text-muted:#94a3b8;--text-dim:#64748b;--yellow:#fbbf24;--gold:#f59e0b;--purple:#a78bfa;--nav-bg:rgba(7,13,24,.85);--input-bg:rgba(255,255,255,.03);--input-border:rgba(255,255,255,.08);--radius:16px;--radius-lg:20px;--shadow:0 25px 50px -12px rgba(0,0,0,.55)}
+[data-theme=light]{--bg:#f8fafc;--bg-elevated:#fff;--bg-card:#fff;--bg-card-solid:#fff;--border:rgba(15,23,42,.08);--cyan:#0d9488;--teal:#0f766e;--green:#059669;--text:#0f172a;--text-muted:#475569;--text-dim:#94a3b8;--yellow:#d97706;--nav-bg:rgba(248,250,252,.9);--input-bg:rgba(15,23,42,.03);--input-border:rgba(15,23,42,.1)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a,button{-webkit-tap-highlight-color:rgba(45,212,191,.15)}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,box-shadow .3s}
+.navbar.scrolled{background:rgba(7,13,24,.96)!important;box-shadow:0 4px 28px rgba(0,0,0,.35)}
+.logo{font-size:1.35rem;font-weight:800;color:var(--text);text-decoration:none}.logo span{color:var(--cyan)}
+.nav-links{display:flex;gap:1.5rem;list-style:none}.nav-links a{color:var(--text-muted);text-decoration:none;font-size:.875rem;font-weight:500}
+.nav-actions{display:flex;align-items:center;gap:.55rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.35rem;border-radius:999px;font-weight:600;font-size:.875rem;text-decoration:none;border:none;cursor:pointer;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;position:relative;overflow:hidden}
+.btn-nav{background:var(--bg-card-solid);color:var(--text);border:1px solid var(--border);padding:.5rem 1.1rem;font-size:.85rem}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.theme-toggle{width:38px;height:38px;border-radius:50%;background:var(--bg-card-solid);border:1px solid var(--border);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}.theme-toggle .icon-sun{display:none}[data-theme=light] .theme-toggle .icon-moon{display:none}[data-theme=light] .theme-toggle .icon-sun{display:block}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}.hamburger span{display:block;width:22px;height:2px;background:var(--text)}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:999;flex-direction:column;align-items:center;justify-content:center;padding:5rem 1.5rem}.mobile-menu.open{display:flex}.mobile-menu a{color:var(--text);text-decoration:none;font-size:1.05rem;font-weight:600;padding:.95rem;width:100%;max-width:320px;text-align:center;border-bottom:1px solid var(--border)}
+.hero{min-height:100vh;padding:110px 2rem 70px;display:flex;align-items:center;background-image:linear-gradient(105deg,rgba(7,13,24,.92) 0%,rgba(7,13,24,.78) 42%,rgba(7,13,24,.4) 100%),url('hero-bg.jpg');background-size:cover;background-position:center right}
+.hero-inner{max-width:1180px;margin:0 auto;width:100%;display:flex;align-items:center;gap:3.5rem}
+.hero-content{flex:1;max-width:540px}
+.badge{display:inline-flex;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--cyan);font-size:.7rem;font-weight:600;padding:.35rem .85rem;border-radius:999px;margin-bottom:1.4rem;text-transform:uppercase}
+.hero h1{font-size:3rem;font-weight:800;line-height:1.12;margin-bottom:1.2rem}.hero h1 .highlight{background:linear-gradient(135deg,var(--cyan),#5eead4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-content>p{color:var(--text-muted);font-size:1.05rem;margin-bottom:1.9rem}
+.hero-buttons{display:flex;gap:.7rem;margin-bottom:1.8rem;flex-wrap:wrap}
+.hero-checks{display:flex;flex-wrap:wrap;gap:.9rem 1.4rem;font-size:.82rem;color:var(--text-muted)}
+.hero-visual{flex:1;display:flex;justify-content:center}
+.monitor-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.4rem;width:100%;max-width:420px;box-shadow:var(--shadow)}
+.monitor-header{display:flex;justify-content:space-between;margin-bottom:.9rem}.monitor-title{font-size:.7rem;color:var(--text-muted)}.status-dot{font-size:.65rem;font-weight:600;color:var(--green)}
+.monitor-card h3{font-size:1.25rem;margin-bottom:.2rem}.monitor-sub{font-size:.65rem;color:var(--text-dim);margin-bottom:.45rem;letter-spacing:1px}
+.chart-area{height:190px;margin-bottom:1rem;border-radius:10px;overflow:hidden;background:#0f192d;border:1px solid var(--border)}.chart-area iframe{width:100%;height:100%;border:0;display:block}
+.monitor-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.stat-box{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:.65rem;text-align:center}.stat-box .label{font-size:.6rem;color:var(--text-dim)}.stat-box .value{font-size:.85rem;font-weight:700;color:var(--cyan)}
+.feature-bar{background:var(--bg-elevated);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.4rem 2rem}.feature-bar-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;text-align:center}.feature-bar-item h4{font-size:.9rem}.feature-bar-item p{font-size:.78rem;color:var(--text-dim)}
+section{padding:5rem 2rem}.container{max-width:1080px;margin:0 auto}.section-label{font-size:.7rem;font-weight:600;color:var(--cyan);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:.7rem}.section-title{font-size:2.2rem;font-weight:800;margin-bottom:.7rem}.section-desc{color:var(--text-muted);max-width:560px;margin-bottom:2.5rem}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.5rem}.why-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem}.why-icon{width:38px;height:38px;border-radius:10px;background:rgba(45,212,191,.1);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;font-weight:700;color:var(--cyan)}.why-card h3{font-size:1rem;margin-bottom:.4rem}.why-card p{font-size:.85rem;color:var(--text-muted)}
+.disclaimer-box{background:rgba(251,191,36,.06);border-left:3px solid var(--yellow);border-radius:0 12px 12px 0;padding:1rem 1.2rem;font-size:.85rem;color:var(--text-muted)}.disclaimer-box strong{color:var(--yellow)}
+.eco-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem}.eco-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem}.eco-icon{width:38px;height:38px;border-radius:10px;background:rgba(45,212,191,.1);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;font-weight:700;color:var(--cyan);font-size:.75rem}.eco-card h3{font-size:1rem;margin-bottom:.35rem}.eco-card p{font-size:.82rem;color:var(--text-muted)}
+.perf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:1.4rem}.perf-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem}.perf-label{font-size:.65rem;font-weight:700;color:var(--cyan)}.mt5-badge{font-size:.6rem;background:rgba(52,211,153,.12);color:var(--green);padding:.2rem .45rem;border-radius:5px}.perf-account{font-size:1.1rem;font-weight:700;margin:.85rem 0}.online-text{font-size:.65rem;color:var(--green)}
+.perf-stats{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.9rem}.perf-stat{background:var(--input-bg);border-radius:10px;padding:.65rem}.perf-stat .label{font-size:.65rem;color:var(--text-dim)}.perf-stat .value{font-size:.95rem;font-weight:700}.perf-stat .value.profit{color:var(--green)}
+.daily-return{background:rgba(52,211,153,.08);border-radius:10px;padding:.65rem .9rem;display:flex;justify-content:space-between}.daily-return .value{font-weight:700;color:var(--green)}
+.video-frame{position:relative;width:100%;max-width:900px;margin:0 auto;padding-bottom:56.25%;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border)}.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}.testi-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}.testi-stars{color:var(--gold);margin-bottom:.75rem}.testi-card p{font-size:.9rem;color:var(--text-muted);margin-bottom:1rem}.testi-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;color:#042f2e;margin-right:.5rem}
+.faq-list{max-width:720px}.faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;margin-bottom:.6rem;overflow:hidden}.faq-q{width:100%;background:none;border:none;color:var(--text);font-family:inherit;font-size:.95rem;font-weight:600;text-align:left;padding:1.1rem 1.3rem;cursor:pointer;display:flex;justify-content:space-between}.faq-a{max-height:0;overflow:hidden;padding:0 1.3rem;transition:max-height .35s,padding .35s}.faq-item.active .faq-a{max-height:220px;padding:0 1.3rem 1.1rem}.faq-a p{font-size:.875rem;color:var(--text-muted)}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2rem}.step-num{font-size:2.4rem;font-weight:800;color:var(--text-dim);opacity:.25}.step h3{font-size:1.1rem;margin:.4rem 0}.step p{font-size:.88rem;color:var(--text-muted)}
+.cta-section{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}.form-card{background:var(--bg-card-solid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center}
+footer{border-top:1px solid var(--border);padding:3rem 2rem 2rem;background:var(--bg-elevated)}.footer-grid{max-width:1080px;margin:0 auto 2rem;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2rem}.footer-col h4{font-size:.8rem;font-weight:700;text-transform:uppercase;margin-bottom:1rem}.footer-col a{display:block;font-size:.875rem;color:var(--text-muted);text-decoration:none;margin-bottom:.5rem}.footer-bottom{max-width:1080px;margin:0 auto;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-dim)}
+.wa-float{position:fixed;bottom:1.4rem;right:1.4rem;z-index:996;background:#25d366;color:#fff;padding:.65rem 1.15rem;border-radius:999px;font-weight:600;font-size:.82rem;text-decoration:none;box-shadow:0 8px 24px rgba(37,211,102,.35)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}.reveal.visible{opacity:1;transform:translateY(0)}
+.chat-fab{position:fixed;bottom:5.2rem;right:1.4rem;z-index:998;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;box-shadow:0 8px 28px rgba(45,212,191,.35);display:flex;align-items:center;justify-content:center}
+.chat-fab svg{width:26px;height:26px}.chat-fab .badge-dot{position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:#f87171;border:2px solid var(--bg)}
+.chat-panel{position:fixed;bottom:9.2rem;right:1.4rem;z-index:997;width:min(360px,calc(100vw - 1.5rem));height:min(480px,calc(100vh - 11rem));background:var(--bg-card-solid);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:none;flex-direction:column;overflow:hidden}
+.chat-panel.open{display:flex}
+.chat-head{padding:.9rem 1rem;background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(20,184,166,.08));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.chat-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;color:#042f2e}
+.chat-head-info{flex:1}.chat-head-info strong{display:block;font-size:.9rem}.chat-head-info span{font-size:.72rem;color:var(--green)}
+.chat-close{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1.35rem}
+.chat-body{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.chat-msg{max-width:90%;padding:.7rem .9rem;border-radius:14px;font-size:.85rem;line-height:1.55}
+.chat-msg.bot{align-self:flex-start;background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.15);border-bottom-left-radius:4px}
+.chat-msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;border-bottom-right-radius:4px;font-weight:500}
+.chat-msg a{color:var(--cyan)}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:.4rem}
+.chat-suggestions button{background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:.72rem;padding:.4rem .7rem;border-radius:999px;cursor:pointer;font-family:inherit}
+.chat-suggestions button:hover{border-color:var(--cyan);color:var(--cyan)}
+.chat-typing{align-self:flex-start;font-size:.8rem;color:var(--text-dim);display:none}.chat-typing.show{display:block}
+.chat-foot{padding:.75rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.chat-foot input{flex:1;background:var(--input-bg);border:1px solid var(--input-border);border-radius:999px;padding:.65rem 1rem;color:var(--text);font-size:.875rem;font-family:inherit;outline:none}
+.chat-foot input:focus{border-color:var(--cyan)}
+.chat-foot button{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;display:flex;align-items:center;justify-content:center}
+@media(max-width:960px){
+.navbar{padding:0 1rem;height:60px}.nav-links,.btn-nav{display:none}.hamburger{display:flex;width:44px;height:44px;align-items:center;justify-content:center}
+.hero{min-height:auto;padding:88px 1.15rem 2.5rem;background-position:center;background-image:linear-gradient(180deg,rgba(7,13,24,.94),rgba(7,13,24,.8)),url('hero-bg.jpg')}
+.hero-inner{flex-direction:column;text-align:center;gap:1.75rem}.hero-content{max-width:100%}.hero h1{font-size:1.85rem}
+.hero-buttons{flex-direction:column;align-items:stretch}.hero-buttons .btn{width:100%;min-height:48px}
+.monitor-card{max-width:100%}.chart-area{height:170px}
+.feature-bar-inner{grid-template-columns:1fr 1fr}
+section{padding:3rem 1.15rem}.section-title{font-size:1.55rem}
+.why-grid,.perf-grid,.testi-grid,.steps-grid,.eco-grid,.cta-section,.footer-grid{grid-template-columns:1fr;gap:.9rem}
+footer{padding:2.25rem 1.15rem 5.5rem}
+.wa-float{bottom:1rem;right:1rem}
+.chat-fab{bottom:4.8rem;right:1rem;width:52px;height:52px}
+.chat-panel{bottom:8.6rem;right:.75rem;left:.75rem;width:auto;height:min(460px,calc(100vh - 10rem))}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<a href="index.html" class="logo">SMART<span>AI</span></a>
+<ul class="nav-links">
+<li><a href="#video">Video</a></li>
+<li><a href="#kelebihan">Kelebihan</a></li>
+<li><a href="#produk">Produk</a></li>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+<div class="nav-actions">
+<button class="theme-toggle" id="theme-toggle" aria-label="Theme">
+<svg class="icon-moon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="icon-sun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/></svg>
+</button>
+<a href="daftar.html" class="btn btn-nav">Daftar Minat</a>
+<button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+<a href="#video" onclick="closeMenu()">Video</a>
+<a href="#kelebihan" onclick="closeMenu()">Kelebihan</a>
+<a href="#produk" onclick="closeMenu()">Produk</a>
+<a href="#performance" onclick="closeMenu()">Performance</a>
+<a href="#faq" onclick="closeMenu()">FAQ</a>
+<a href="daftar.html" class="btn btn-primary" onclick="closeMenu()">Daftar Minat</a>
+</div>
+<section class="hero">
+<div class="hero-inner">
+<div class="hero-content">
+<div class="badge">⚡ Trading Automation yang Terukur</div>
+<h1>Biarkan sistem bekerja.<br><span class="highlight">Anda yang kendalikan.</span></h1>
+<p>Smart AI menyatukan EA Trading, monitoring real-time, dan kontrol risiko dalam satu ekosistem yang simpel.</p>
+<div class="hero-buttons">
+<a href="daftar.html" class="btn btn-primary">Mulai Sekarang →</a>
+<a href="#video" class="btn btn-outline">Tonton Video</a>
+</div>
+<div class="hero-checks">
+<span>✓ Automation 24/5</span><span>✓ Live Monitoring</span><span>✓ Risk Control</span><span>✓ Setup Simpel</span>
+</div>
+</div>
+<div class="hero-visual">
+<div class="monitor-card">
+<div class="monitor-header">
+<span class="monitor-title">SMART AI • MONITOR</span>
+<span class="status-dot">● SYSTEM ACTIVE</span>
+</div>
+<h3>Real-Time Monitor</h3>
+<div class="monitor-sub">BALANCE • EQUITY • PERFORMANCE</div>
+<div class="monitor-sub" style="color:var(--cyan);font-weight:600;margin-bottom:.75rem">XAUUSD · LIVE</div>
+<div class="chart-area">
+<iframe title="XAUUSD" loading="lazy" src="https://s.tradingview.com/widgetembed/?symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=0f192d&theme=dark&style=1&timezone=Asia%2FJakarta&hidevolume=1&hideideas=1&locale=id&disabled_features=%5B%22header_widget%22%2C%22left_toolbar%22%2C%22create_volume_indicator_by_default%22%2C%22timeframes_toolbar%22%2C%22control_bar%22%5D&overrides=%7B%22paneProperties.background%22%3A%22%230f192d%22%2C%22paneProperties.backgroundType%22%3A%22solid%22%2C%22mainSeriesProperties.candleStyle.upColor%22%3A%22%232dd4bf%22%2C%22mainSeriesProperties.candleStyle.downColor%22%3A%22%23f87171%22%2C%22mainSeriesProperties.candleStyle.borderUpColor%22%3A%22%232dd4bf%22%2C%22mainSeriesProperties.candleStyle.borderDownColor%22%3A%22%23f87171%22%2C%22mainSeriesProperties.candleStyle.wickUpColor%22%3A%22%232dd4bf%22%2C%22mainSeriesProperties.candleStyle.wickDownColor%22%3A%22%23f87171%22%2C%22scalesProperties.textColor%22%3A%22%2394a3b8%22%2C%22scalesProperties.showSeriesLastValue%22%3Atrue%7D" allowtransparency="true"></iframe>
+</div>
+<div class="monitor-stats">
+<div class="stat-box"><div class="label">Automation</div><div class="value">24/5</div></div>
+<div class="stat-box"><div class="label">Monitor</div><div class="value">Live</div></div>
+<div class="stat-box"><div class="label">Control</div><div class="value">Smart</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="feature-bar"><div class="feature-bar-inner">
+<div class="feature-bar-item reveal"><h4>EA Automation</h4><p>Eksekusi tanpa emosi</p></div>
+<div class="feature-bar-item reveal"><h4>Smart Risk</h4><p>Parameter di tangan Anda</p></div>
+<div class="feature-bar-item reveal"><h4>Live Monitor</h4><p>Pantau kapan saja</p></div>
+<div class="feature-bar-item reveal"><h4>Member Support</h4><p>Belajar & diskusi</p></div>
+</div></div>
+<section id="video"><div class="container" style="text-align:center">
+<div class="section-label reveal">Lihat Smart AI</div>
+<h2 class="section-title reveal">Bagaimana sistemnya bekerja</h2>
+<p class="section-desc reveal" style="margin:0 auto 2rem">Tonton penjelasan singkat ekosistem Smart AI.</p>
+<div class="video-frame reveal"><iframe src="https://www.youtube.com/embed/WFI02tyEHu4?rel=0&modestbranding=1" title="Smart AI" allowfullscreen loading="lazy"></iframe></div>
+</div></section>
+<section id="kelebihan"><div class="container">
+<div class="section-label reveal">Mengapa Smart AI?</div>
+<h2 class="section-title reveal">Bukan sekadar robot.<br>Ini ekosistem trading.</h2>
+<div class="why-grid">
+<div class="why-card reveal"><div class="why-icon">AI</div><h3>Automation 24/5</h3><p>EA menjalankan aturan trading otomatis selama terminal aktif.</p></div>
+<div class="why-card reveal"><div class="why-icon">◎</div><h3>Monitoring Transparan</h3><p>Lihat balance, equity, profit secara real-time.</p></div>
+<div class="why-card reveal"><div class="why-icon">◇</div><h3>Risk Control</h3><p>Atur lot, target, dan batas kerugian sesuai profil risiko.</p></div>
+<div class="why-card reveal"><div class="why-icon">⚙</div><h3>Setting Simpel</h3><p>Tidak perlu jadi programmer.</p></div>
+<div class="why-card reveal"><div class="why-icon">⇄</div><h3>Multi Strategy</h3><p>Beberapa EA dalam satu ekosistem.</p></div>
+<div class="why-card reveal"><div class="why-icon">↗</div><h3>Terus Berkembang</h3><p>Roadmap akun pantau, copy trade, komunitas.</p></div>
+</div>
+<div class="disclaimer-box reveal"><strong>Catatan:</strong> Bukan janji pasti profit. Nilai utamanya automation + monitoring + risk control.</div>
+</div></section>
+<section id="produk"><div class="container">
+<div class="section-label reveal">Smart Ecosystem</div>
+<h2 class="section-title reveal">Satu tempat. Beberapa solusi.</h2>
+<div class="eco-grid">
+<div class="eco-card reveal"><div class="eco-icon">EA</div><h3>EA Trading</h3><p>Sistem otomatis dengan kontrol risiko.</p></div>
+<div class="eco-card reveal"><div class="eco-icon">↗</div><h3>Copy Trade</h3><p>Strategi copy trading.</p></div>
+<div class="eco-card reveal"><div class="eco-icon">◎</div><h3>Akun Pantau</h3><p>Dashboard performance real-time.</p></div>
+<div class="eco-card reveal"><div class="eco-icon">◈</div><h3>Community</h3><p>Update, panduan, diskusi member.</p></div>
+</div></div></section>
+<section id="performance"><div class="container">
+<div class="section-label reveal">Live Performance</div>
+<h2 class="section-title reveal">Data aktual. Bukan sekadar janji.</h2>
+<div class="perf-grid">
+<div class="perf-card reveal"><div style="display:flex;justify-content:space-between"><span class="perf-label">SMART BASIC</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC01 <span class="online-text">● ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit</div><div class="value">$10,000</div></div><div class="perf-stat"><div class="label">Equity</div><div class="value">$76,999</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit">+$100.80</div></div><div class="perf-stat"><div class="label">Penarikan</div><div class="value">$73,862</div></div></div><div class="daily-return"><span>Daily Return</span><span class="value">+0.13%</span></div></div>
+<div class="perf-card reveal"><div style="display:flex;justify-content:space-between"><span class="perf-label" style="color:var(--gold)">SMART GOLD</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC02 <span class="online-text">● ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit</div><div class="value">$10,000</div></div><div class="perf-stat"><div class="label">Equity</div><div class="value">$102,254</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit">+$40.30</div></div><div class="perf-stat"><div class="label">Penarikan</div><div class="value">$28,000</div></div></div><div class="daily-return"><span>Daily Return</span><span class="value">+0.04%</span></div></div>
+<div class="perf-card reveal"><div style="display:flex;justify-content:space-between"><span class="perf-label" style="color:var(--purple)">SMART PRO</span><span class="mt5-badge">MT5 LIVE</span></div><div class="perf-account">ACC03 <span class="online-text">● ONLINE</span></div><div class="perf-stats"><div class="perf-stat"><div class="label">Deposit</div><div class="value">$60,000</div></div><div class="perf-stat"><div class="label">Equity</div><div class="value">$625,625</div></div><div class="perf-stat"><div class="label">Daily Profit</div><div class="value profit">+$1,378</div></div><div class="perf-stat"><div class="label">Penarikan</div><div class="value">$5.54M</div></div></div><div class="daily-return"><span>Daily Return</span><span class="value">+0.22%</span></div></div>
+</div></div></section>
+<section id="testimoni"><div class="container">
+<div class="section-label reveal">Testimoni</div>
+<h2 class="section-title reveal">Dari yang sudah mencoba.</h2>
+<div class="testi-grid">
+<div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p>"Setup simpel, monitoring transparan."</p><div><span class="testi-avatar">AR</span> Andi R. · Smart Gold</div></div>
+<div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p>"Risk control jelas, parameter bisa disesuaikan."</p><div><span class="testi-avatar">SW</span> Sari W. · Smart Basic</div></div>
+<div class="testi-card reveal"><div class="testi-stars">★★★★☆</div><p>"Support aktif dan panduan membantu pemula."</p><div><span class="testi-avatar">BP</span> Budi P. · Smart Pro</div></div>
+</div></div></section>
+<section id="faq"><div class="container">
+<div class="section-label reveal">FAQ</div>
+<h2 class="section-title reveal">Pertanyaan yang sering muncul.</h2>
+<div class="faq-list">
+<div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Apakah menjamin profit? <span>▾</span></button><div class="faq-a"><p>Tidak. Fokus pada automation, monitoring, dan risk control.</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Platform apa? <span>▾</span></button><div class="faq-a"><p>MetaTrader 5 (MT5).</p></div></div>
+<div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Cara memulai? <span>▾</span></button><div class="faq-a"><p>Isi formulir di halaman Daftar Minat. Tim menghubungi via WhatsApp.</p></div></div>
+</div></div></section>
+<section id="cara-join"><div class="container">
+<div class="section-label reveal">Cara Bergabung</div>
+<h2 class="section-title reveal">Tiga langkah sederhana.</h2>
+<div class="steps-grid">
+<div class="step reveal"><div class="step-num">01</div><h3>Isi Formulir</h3><p>Buka halaman daftar minat.</p></div>
+<div class="step reveal"><div class="step-num">02</div><h3>Kami Hubungi</h3><p>Tim menjelaskan via WhatsApp.</p></div>
+<div class="step reveal"><div class="step-num">03</div><h3>Pilih & Mulai</h3><p>Lanjutkan setup jika cocok.</p></div>
+</div></div></section>
+<section id="daftar"><div class="container"><div class="cta-section">
+<div>
+<div class="section-label reveal">Early Access</div>
+<h2 class="section-title reveal">Penasaran bagaimana sistemnya bekerja?</h2>
+<p class="section-desc reveal">Isi formulir di halaman terpisah. Tim siap menjelaskan tanpa tekanan membeli.</p>
+</div>
+<div class="form-card reveal">
+<h3 style="margin-bottom:.75rem">Siap mulai?</h3>
+<p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem">Formulir minat di halaman khusus.</p>
+<a href="daftar.html" class="btn btn-primary" style="padding:.85rem 1.8rem;min-height:48px">Buka Formulir Daftar →</a>
+</div>
+</div></div></section>
+<footer>
+<div class="footer-grid">
+<div><a href="index.html" class="logo">SMART<span>AI</span></a><p style="color:var(--text-muted);font-size:.85rem;margin-top:.8rem">Ekosistem trading automation.</p></div>
+<div class="footer-col"><h4>Produk</h4><a href="#produk">EA Trading</a><a href="#produk">Copy Trade</a></div>
+<div class="footer-col"><h4>Perusahaan</h4><a href="#video">Video</a><a href="#faq">FAQ</a></div>
+<div class="footer-col"><h4>Dukungan</h4><a href="daftar.html">Daftar Minat</a><a href="https://wa.me/6282137585596" target="_blank">WhatsApp</a></div>
+</div>
+<div class="footer-bottom">Risk Disclosure: Trading memiliki risiko kerugian.</div>
+</footer>
+<button class="chat-fab" id="chat-fab" aria-label="SMART AI assisten" title="SMART AI assisten">
+<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+<span class="badge-dot" id="chat-dot"></span>
+</button>
+<div class="chat-panel" id="chat-panel">
+<div class="chat-head">
+<div class="chat-avatar">AI</div>
+<div class="chat-head-info"><strong>SMART AI assisten</strong><span>● Online</span></div>
+<button class="chat-close" id="chat-close" aria-label="Tutup">×</button>
+</div>
+<div class="chat-body" id="chat-body">
+<div class="chat-msg bot">Halo! Saya <b>SMART AI assisten</b>. Tanya apa saja tentang Smart AI, produk, cara daftar, risiko, atau chart XAUUSD.</div>
+<div class="chat-suggestions" id="chat-suggestions">
+<button type="button" data-q="Apa itu Smart AI?">Apa itu Smart AI?</button>
+<button type="button" data-q="Bagaimana cara daftar?">Cara daftar</button>
+<button type="button" data-q="Apakah menjamin profit?">Jaminan profit?</button>
+<button type="button" data-q="Produk apa saja?">Produk</button>
+</div>
+<div class="chat-typing" id="chat-typing">SMART AI assisten mengetik...</div>
+</div>
+<div class="chat-foot">
+<input type="text" id="chat-input" placeholder="Tulis pertanyaan..." autocomplete="off"/>
+<button type="button" id="chat-send" aria-label="Kirim"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+</div>
+</div>
+<a href="https://wa.me/6282137585596" class="wa-float" target="_blank">WHATSAPP</a>
+<script>
+const html=document.documentElement;const saved=localStorage.getItem('theme');if(saved)html.setAttribute('data-theme',saved);
+document.getElementById('theme-toggle').addEventListener('click',()=>{const n=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',n);localStorage.setItem('theme',n);});
+const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobile-menu');
+hamburger.addEventListener('click',()=>{const open=mobileMenu.classList.toggle('open');document.body.style.overflow=open?'hidden':'';});
+function closeMenu(){mobileMenu.classList.remove('open');document.body.style.overflow='';}
+function toggleFaq(btn){const item=btn.parentElement;const was=item.classList.contains('active');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('active'));if(!was)item.classList.add('active');}
+(function(){const els=document.querySelectorAll('.reveal');function show(el){el.classList.add('visible');}if('IntersectionObserver' in window){const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){show(e.target);obs.unobserve(e.target);}});},{threshold:0.08});els.forEach((el,i)=>{el.style.transitionDelay=(i%6)*0.07+'s';obs.observe(el);});}else{els.forEach(show);}setTimeout(()=>document.querySelectorAll('.reveal:not(.visible)').forEach(show),3000);})();
+window.addEventListener('scroll',()=>{const nav=document.querySelector('.navbar');if(nav)nav.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
+(function(){
+const fab=document.getElementById('chat-fab'),panel=document.getElementById('chat-panel'),closeBtn=document.getElementById('chat-close');
+const body=document.getElementById('chat-body'),input=document.getElementById('chat-input'),sendBtn=document.getElementById('chat-send');
+const typing=document.getElementById('chat-typing'),dot=document.getElementById('chat-dot');
+if(!fab||!panel)return;
+const knowledge=[
+{k:['halo','hai','hi','hello','selamat'],a:'Halo! Saya SMART AI assisten. Tanya tentang Smart AI, produk, cara daftar, risiko, atau chart XAUUSD.'},
+{k:['apa itu smart','smart ai','tentang smart'],a:'Smart AI adalah ekosistem trading automation: EA Trading, monitoring real-time, dan kontrol risiko dalam satu sistem yang simpel.'},
+{k:['cara daftar','cara join','daftar','gabung','mulai'],a:'Cara daftar: 1) Buka halaman Daftar Minat 2) Isi nama & WhatsApp 3) Tim hubungi via WA 4) Pilih layanan jika cocok. Link: daftar.html — tanpa kewajiban beli.'},
+{k:['produk','layanan','fitur','ea','copy trade','akun pantau'],a:'Produk: EA Trading (otomatis + risk control), Copy Trade, Akun Pantau (dashboard real-time), dan Community member.'},
+{k:['profit','jamin','pasti untung','hasil'],a:'Tidak ada jaminan profit. Trading berisiko. Fokus Smart AI: automation, monitoring, dan risk control — bukan janji hasil pasti.'},
+{k:['risiko','risk','rugi'],a:'Trading forex/emas berisiko kerugian. Anda mengatur lot, target, dan batas kerugian. Gunakan modal yang siap ditanggung risikonya.'},
+{k:['platform','mt5','metatrader'],a:'Platform: MetaTrader 5 (MT5). EA aktif saat terminal online; VPS disarankan agar lebih stabil.'},
+{k:['harga','biaya','paket','berapa'],a:'Untuk paket & biaya terkini, daftar minat atau chat WhatsApp. Tim jelaskan opsi tanpa tekanan.'},
+{k:['xauusd','chart','emas','gold','candle'],a:'Chart di kartu Real-Time Monitor menampilkan XAUUSD live (candle, harga, waktu, OHLC). Interval 15 menit, zona Asia/Jakarta.'},
+{k:['whatsapp','hubungi','kontak','admin'],a:'Klik tombol WHATSAPP hijau di pojok kanan bawah, atau isi formulir di daftar.html.'},
+{k:['login','member'],a:'Login di navbar untuk member. Belum punya akun? Daftar minat dulu agar tim bantu aktivasi.'},
+{k:['vps','online','24'],a:'EA berjalan saat MT5 aktif. Banyak member pakai VPS agar automation lebih stabil.'},
+{k:['faq','pertanyaan'],a:'FAQ: tidak jamin profit · platform MT5 · mulai via Daftar Minat · EA butuh terminal aktif. Tanya detail lain di sini.'},
+{k:['terima kasih','thanks','makasih','ok','oke'],a:'Sama-sama! Ada pertanyaan lain? Ketik saja, atau lanjut ke daftar.html.'}
+];
+const fallback='Belum bisa menjawab itu. Coba tanya: Smart AI, produk, cara daftar, risiko, MT5, chart XAUUSD, atau WhatsApp.';
+function normalize(t){return (t||'').toLowerCase().replace(/[^\w\s]/g,' ').replace(/\s+/g,' ').trim();}
+function answer(q){const n=normalize(q);if(!n)return 'Silakan ketik pertanyaan.';let best=null,score=0;for(const item of knowledge){let s=0;for(const kw of item.k){if(n.includes(kw))s+=kw.length;}if(s>score){score=s;best=item.a;}}return score>0?best:fallback;}
+function addMsg(text,who){const div=document.createElement('div');div.className='chat-msg '+who;div.innerHTML=String(text).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/\n/g,'<br>').replace(/daftar\.html/g,'<a href="daftar.html">halaman Daftar Minat</a>');body.insertBefore(div,typing);body.scrollTop=body.scrollHeight;}
+function botReply(q){typing.classList.add('show');body.scrollTop=body.scrollHeight;setTimeout(function(){typing.classList.remove('show');addMsg(answer(q),'bot');},500);}
+function send(){const q=(input.value||'').trim();if(!q)return;addMsg(q,'user');input.value='';const sug=document.getElementById('chat-suggestions');if(sug)sug.style.display='none';botReply(q);}
+fab.addEventListener('click',function(){panel.classList.toggle('open');if(panel.classList.contains('open')){if(dot)dot.style.display='none';input.focus();}});
+closeBtn.addEventListener('click',function(){panel.classList.remove('open');});
+sendBtn.addEventListener('click',send);
+input.addEventListener('keydown',function(e){if(e.key==='Enter')send();});
+document.getElementById('chat-suggestions').addEventListener('click',function(e){const btn=e.target.closest('button[data-q]');if(!btn)return;input.value=btn.getAttribute('data-q');send();});
+})();
+</script>
+</body>
+</html>

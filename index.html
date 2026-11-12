@@ -2,24 +2,37 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Smart AI — Trading Automation</title>
 <meta name="theme-color" content="#070d18"/>
-<style>body{margin:0;background:#070d18;color:#94a3b8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}.loader{text-align:center}.dot{display:inline-block;width:8px;height:8px;margin:0 3px;background:#2dd4bf;border-radius:50%;animation:b 1.2s infinite ease-in-out}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes b{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}</style>
+<style>
+body{margin:0;background:#070d18;color:#94a3b8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.loader{text-align:center}.dot{display:inline-block;width:8px;height:8px;margin:0 3px;background:#2dd4bf;border-radius:50%;animation:b 1.2s infinite ease-in-out}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes b{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+</style>
 </head>
 <body>
 <div class="loader" id="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div><p style="margin-top:1rem;font-size:.9rem">Memuat Smart AI…</p></div>
 <script>
-(async function () {
+(async function(){
   try {
     const res = await fetch('https://cdn.jsdelivr.net/gh/KingRafer/smart-ai-landing@b0d3d8c3/index.html');
     if (!res.ok) throw new Error(res.status);
-    const html = await res.text();
+    let html = await res.text();
+    const animCss = '\n/* cooler animations */\n@keyframes floatSoft{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}\n@keyframes pulseRing{0%{transform:scale(.8);opacity:.6}70%{transform:scale(1.7);opacity:0}100%{opacity:0}}\n@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}\n@keyframes orbFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(25px,-35px)}}\n@keyframes orbFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,20px)}}\n@keyframes borderGlow{0%,100%{box-shadow:0 0 0 1px rgba(45,212,191,.15),0 0 18px rgba(45,212,191,.08)}50%{box-shadow:0 0 0 1px rgba(45,212,191,.35),0 0 28px rgba(45,212,191,.16)}}\n@keyframes shineSweep{0%{left:-100%}100%{left:120%}}\n@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}\n@keyframes countPop{0%{transform:scale(1)}40%{transform:scale(1.1)}100%{transform:scale(1)}}\n.hero{position:relative;overflow:hidden}\n.hero-orbs{position:absolute;inset:0;pointer-events:none;z-index:0}\n.hero-orbs .orb{position:absolute;border-radius:50%;filter:blur(55px);opacity:.4}\n.hero-orbs .orb-1{width:360px;height:360px;background:radial-gradient(circle,rgba(45,212,191,.35),transparent 70%);top:-60px;right:8%;animation:orbFloat1 16s ease-in-out infinite}\n.hero-orbs .orb-2{width:260px;height:260px;background:radial-gradient(circle,rgba(167,139,250,.28),transparent 70%);bottom:8%;left:4%;animation:orbFloat2 20s ease-in-out infinite}\n.hero-inner{position:relative;z-index:1}\n.hero h1 .highlight{background:linear-gradient(135deg,var(--cyan),#5eead4,#67e8f9,var(--cyan));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 6s ease infinite}\n.monitor-card{animation:scaleIn 1s .2s both,floatSoft 5.5s ease-in-out 1.2s infinite,borderGlow 4s ease-in-out infinite !important}\n.monitor-card:hover{transform:translateY(-6px) scale(1.02)!important;box-shadow:0 28px 50px -12px rgba(0,0,0,.55),0 0 36px rgba(45,212,191,.14)}\n.status-dot,.online-text{position:relative}\n.status-dot::before,.online-text::before{content:\"\";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;border:1.5px solid var(--green);animation:pulseRing 2s ease-out infinite;pointer-events:none}\n.btn{position:relative;overflow:hidden}\n.btn-primary::after{content:\"\";position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg)}\n.btn-primary:hover::after{animation:shineSweep .65s ease}\n.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(45,212,191,.38)}\n.why-card:hover,.eco-card:hover,.perf-card:hover,.testi-card:hover{transform:translateY(-8px);border-color:rgba(45,212,191,.35);box-shadow:0 18px 36px -10px rgba(0,0,0,.4)}\n.reveal.from-left{transform:translateX(-36px)}\n.reveal.from-left.visible{transform:translateX(0)}\n.reveal.from-right{transform:translateX(36px)}\n.reveal.from-right.visible{transform:translateX(0)}\n.reveal.scale-up{transform:scale(.93) translateY(16px)}\n.reveal.scale-up.visible{transform:scale(1) translateY(0)}\n.perf-stat .value.counted{animation:countPop .4s ease}\n.wa-float{animation:floatY 3s ease-in-out infinite}\n.wa-float:hover{animation:none;transform:scale(1.07)}\n@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}\n';
+    const extraJs = '\n(function(){\n  var hero=document.querySelector(\'.hero\');\n  if(hero && !document.querySelector(\'.hero-orbs\')){\n    var o=document.createElement(\'div\');\n    o.className=\'hero-orbs\';o.setAttribute(\'aria-hidden\',\'true\');\n    o.innerHTML=\'<div class="orb orb-1"></div><div class="orb orb-2"></div>\';\n    hero.insertBefore(o,hero.firstChild);\n  }\n  var els=document.querySelectorAll(\'.reveal\');\n  els.forEach(function(el,i){\n    if(el.closest(\'.hero-visual\')||el.classList.contains(\'section-label\')||el.classList.contains(\'section-title\'))return;\n    var m=i%5;if(m===1)el.classList.add(\'from-left\');else if(m===2)el.classList.add(\'from-right\');else if(m===3)el.classList.add(\'scale-up\');\n  });\n  function show(el){el.classList.add(\'visible\');}\n  function animateCount(el){\n    if(el.dataset.counted)return;el.dataset.counted=\'1\';\n    var raw=el.textContent.trim(),m=raw.match(/^([+$]?)([\\d.,]+)(.*)$/);\n    if(!m)return;\n    var pre=m[1],ns=m[2].replace(/,/g,\'\'),suf=m[3],target=parseFloat(ns);\n    if(isNaN(target))return;\n    var isInt=!ns.includes(\'.\'),t0=performance.now();\n    (function tick(now){\n      var t=Math.min(1,(now-t0)/900),e=1-Math.pow(1-t,3),v=target*e;\n      el.textContent=pre+(isInt?Math.round(v).toLocaleString(\'en-US\'):v.toFixed((ns.split(\'.\')[1]||\'\').length||2))+suf;\n      if(t<1)requestAnimationFrame(tick);else{el.textContent=raw;el.classList.add(\'counted\');}\n    })(t0);\n  }\n  if(\'IntersectionObserver\' in window){\n    var obs=new IntersectionObserver(function(entries){\n      entries.forEach(function(e){\n        if(e.isIntersecting){\n          show(e.target);obs.unobserve(e.target);\n          e.target.querySelectorAll(\'.perf-stat .value\').forEach(animateCount);\n        }\n      });\n    },{threshold:0.1,rootMargin:\'0px 0px -30px 0px\'});\n    els.forEach(function(el,i){el.style.transitionDelay=(i%7)*0.06+\'s\';obs.observe(el);});\n  }else{els.forEach(show);}\n  setTimeout(function(){document.querySelectorAll(\'.reveal:not(.visible)\').forEach(show);},3500);\n})();\n';
+    if (html.includes('</style>')) {
+      html = html.replace('</style>', animCss + '\n</style>');
+    } else {
+      html = html.replace('</head>', '<style>' + animCss + '</style></head>');
+    }
+    html = html.replace('</body>', '<script>' + extraJs + '<\\/script></body>');
     document.open();
     document.write(html);
     document.close();
   } catch (e) {
-    document.getElementById('loader').innerHTML = '<p>Gagal memuat. <a href="https://github.com/KingRafer/smart-ai-landing" style="color:#2dd4bf">Buka repo</a></p>';
+    document.getElementById('loader').innerHTML = '<p>Gagal memuat. <a href="https://github.com/KingRafer/smart-ai-landing" style="color:#2dd4bf">Buka repo</a></p><pre style="font-size:11px;opacity:.6">' + e + '</pre>';
   }
 })();
 </script>

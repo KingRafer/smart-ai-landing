@@ -2,21 +2,21 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Daftar Minat — Smart AI</title>
+<meta name="theme-color" content="#070d18"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root,[data-theme=dark]{--bg:#070d18;--bg-card:#0f192d;--border:rgba(94,234,212,.12);--cyan:#2dd4bf;--teal:#14b8a6;--green:#34d399;--text:#f1f5f9;--text-muted:#94a3b8;--text-dim:#64748b;--yellow:#fbbf24;--input-bg:rgba(255,255,255,.03);--input-border:rgba(255,255,255,.08);--nav-bg:rgba(7,13,24,.9);--shadow:0 25px 50px -12px rgba(0,0,0,.55)}
 [data-theme=light]{--bg:#f8fafc;--bg-card:#fff;--border:rgba(15,23,42,.08);--cyan:#0d9488;--teal:#0f766e;--green:#059669;--text:#0f172a;--text-muted:#475569;--text-dim:#94a3b8;--yellow:#d97706;--input-bg:rgba(15,23,42,.03);--input-border:rgba(15,23,42,.1);--nav-bg:rgba(248,250,252,.95);--shadow:0 20px 40px -12px rgba(15,23,42,.12)}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+*{margin:0;padding:0;box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}a,button{-webkit-tap-highlight-color:rgba(45,212,191,.15)}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(45,212,191,.07),transparent);pointer-events:none;z-index:0}
 .navbar{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.5rem;height:64px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-size:1.25rem;font-weight:800;color:var(--text);text-decoration:none}.logo span{color:var(--cyan)}
 .nav-right{display:flex;align-items:center;gap:.6rem}
-.theme-toggle{width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}.theme-toggle .icon-sun{display:none}[data-theme=light] .theme-toggle .icon-moon{display:none}[data-theme=light] .theme-toggle .icon-sun{display:block}
-.btn-back{color:var(--text-muted);text-decoration:none;font-size:.875rem;font-weight:500}.btn-back:hover{color:var(--cyan)}
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:var(--bg-card);border:1px solid var(--border);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}.theme-toggle .icon-sun{display:none}[data-theme=light] .theme-toggle .icon-moon{display:none}[data-theme=light] .theme-toggle .icon-sun{display:block}
+.btn-back{color:var(--text-muted);text-decoration:none;font-size:.875rem;font-weight:500;padding:.5rem}.btn-back:hover{color:var(--cyan)}
 .page{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:3rem 1.5rem 4rem;display:grid;grid-template-columns:1fr 1.1fr;gap:3rem;align-items:start}
-@media(max-width:800px){.page{grid-template-columns:1fr;gap:2rem}}
 .side-label{font-size:.7rem;font-weight:600;color:var(--cyan);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:.75rem}
 .side-title{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:1rem}
 .side-desc{color:var(--text-muted);font-size:1rem;line-height:1.7;margin-bottom:1.5rem}
@@ -25,20 +25,26 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .form-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2rem;box-shadow:var(--shadow)}
 .form-card h1{font-size:1.35rem;font-weight:700;margin-bottom:.35rem}.form-card .sub{font-size:.875rem;color:var(--text-muted);margin-bottom:1.6rem}
 .form-group{margin-bottom:1.1rem}.form-group label{display:block;font-size:.8rem;font-weight:500;color:var(--text-muted);margin-bottom:.4rem}.form-group label .req{color:var(--cyan)}
-.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:.75rem 1rem;color:var(--text);font-size:.9rem;font-family:inherit;outline:none;transition:border-color .2s,transform .2s}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--cyan);transform:scale(1.01)}
-.form-group select{appearance:none;cursor:pointer}.form-group textarea{resize:vertical;min-height:90px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:520px){.form-row{grid-template-columns:1fr}}
-.btn-submit{width:100%;margin-top:.5rem;padding:.9rem 1.5rem;border:none;border-radius:999px;font-weight:600;font-size:.95rem;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}[data-theme=light] .btn-submit{color:#fff}.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(45,212,191,.35)}.btn-submit:disabled{opacity:.6;cursor:not-allowed}.btn-submit::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.2) 50%,transparent 60%);background-size:200% 100%;animation:shimmer 3s infinite;pointer-events:none}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;padding:.75rem 1rem;color:var(--text);font-size:16px;font-family:inherit;outline:none;min-height:48px;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--cyan)}
+.form-group select{appearance:none;cursor:pointer}.form-group textarea{resize:vertical;min-height:100px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-submit{width:100%;margin-top:.5rem;padding:.95rem 1.5rem;border:none;border-radius:999px;font-weight:600;font-size:1rem;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--cyan),var(--teal));color:#042f2e;min-height:50px}[data-theme=light] .btn-submit{color:#fff}.btn-submit:disabled{opacity:.6}
 .form-note{text-align:center;font-size:.75rem;color:var(--text-dim);margin-top:1rem}
-.success-box{display:none;text-align:center;padding:2.5rem 1rem}.success-box.show{display:block;animation:scaleIn .5s ease both}
+.success-box{display:none;text-align:center;padding:2.5rem 1rem}.success-box.show{display:block}
 .success-icon{width:56px;height:56px;border-radius:50%;background:rgba(52,211,153,.15);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.5rem}
 .success-box h2{font-size:1.25rem;font-weight:700;margin-bottom:.5rem}.success-box p{color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem}.success-box a{color:var(--cyan);text-decoration:none;font-weight:600}
 footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--text-dim)}footer a{color:var(--text-muted);text-decoration:none}
-aside{animation:fadeUp .7s ease both}.form-card{animation:scaleIn .8s .15s cubic-bezier(.22,1,.36,1) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@media(max-width:800px){
+.page{grid-template-columns:1fr;gap:1.5rem;padding:1.5rem 1rem 3rem}
+.side-title{font-size:1.45rem}
+.side-desc{font-size:.92rem}
+.form-card{padding:1.35rem 1.15rem;border-radius:16px}
+.form-card h1{font-size:1.2rem}
+.form-row{grid-template-columns:1fr}
+.navbar{padding:0 1rem;height:56px}
+}
+@supports(padding:env(safe-area-inset-bottom)){body{padding-bottom:env(safe-area-inset-bottom)}}
 </style>
 </head>
 <body>
@@ -69,15 +75,11 @@ aside{animation:fadeUp .7s ease both}.form-card{animation:scaleIn .8s .15s cubic
 <h1>Daftar Minat Smart AI</h1>
 <p class="sub">Isi formulir di bawah. Kami akan segera menghubungi Anda.</p>
 <form id="interest-form" onsubmit="handleSubmit(event)">
-<div class="form-group"><label>Nama lengkap <span class="req">*</span></label><input type="text" name="nama" placeholder="Nama Anda" required/></div>
-<div class="form-row">
-<div class="form-group"><label>Nomor WhatsApp <span class="req">*</span></label><input type="tel" name="wa" placeholder="0812xxxxxxxx" required pattern="[0-9]{10,15}"/></div>
-<div class="form-group"><label>Email</label><input type="email" name="email" placeholder="nama@email.com"/></div>
-</div>
-<div class="form-row">
+<div class="form-group"><label>Nama lengkap <span class="req">*</span></label><input type="text" name="nama" placeholder="Nama Anda" required autocomplete="name"/></div>
+<div class="form-group"><label>Nomor WhatsApp <span class="req">*</span></label><input type="tel" name="wa" placeholder="0812xxxxxxxx" required pattern="[0-9]{10,15}" autocomplete="tel" inputmode="numeric"/></div>
+<div class="form-group"><label>Email</label><input type="email" name="email" placeholder="nama@email.com" autocomplete="email"/></div>
 <div class="form-group"><label>Saya tertarik dengan</label><select name="minat"><option>EA Trading / Robot Trading</option><option>Copy Trade</option><option>Akun Pantau</option><option>Semua layanan</option></select></div>
 <div class="form-group"><label>Pengalaman trading</label><select name="pengalaman"><option>Pemula</option><option>Menengah</option><option>Berpengalaman</option></select></div>
-</div>
 <div class="form-group"><label>Pesan / pertanyaan</label><textarea name="pesan" placeholder="Opsional"></textarea></div>
 <button type="submit" class="btn-submit" id="submit-btn">Kirim & Minta Dihubungi →</button>
 <p class="form-note">Dengan mengirim, Anda setuju dihubungi oleh tim Smart AI.</p>

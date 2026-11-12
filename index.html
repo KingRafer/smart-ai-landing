@@ -1,15 +1,27 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Smart AI — Trading Automation</title>
 <meta name="theme-color" content="#070d18"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="main.js">
+<style>body{margin:0;background:#070d18;color:#94a3b8;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}.loader{text-align:center}.dot{display:inline-block;width:8px;height:8px;margin:0 3px;background:#2dd4bf;border-radius:50%;animation:b 1.2s infinite ease-in-out}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}@keyframes b{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}</style>
 </head>
 <body>
-<p style="padding:2rem;font-family:system-ui">Sedang restore... Silakan refresh sebentar.</p>
-<script src="main.js"></script>
+<div class="loader" id="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div><p style="margin-top:1rem;font-size:.9rem">Memuat Smart AI…</p></div>
+<script>
+(async function () {
+  try {
+    const res = await fetch('https://cdn.jsdelivr.net/gh/KingRafer/smart-ai-landing@b0d3d8c3/index.html');
+    if (!res.ok) throw new Error(res.status);
+    const html = await res.text();
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (e) {
+    document.getElementById('loader').innerHTML = '<p>Gagal memuat. <a href="https://github.com/KingRafer/smart-ai-landing" style="color:#2dd4bf">Buka repo</a></p>';
+  }
+})();
+</script>
 </body>
 </html>

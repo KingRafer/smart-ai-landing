@@ -1,34 +1,13 @@
-/* SMARTAI MT5 API — live + demo fallback (shared with dashboard) */
+/* SMARTAI MT5 API — live + demo fallback (fast cache) */
 (function (w) {
   'use strict';
 
   var LIVE_BASE = 'https://script.google.com/macros/s/AKfycbw8AEMeie38BBxW3S-22bf0WrI_7vGHPkpANGEsoQiTv7Jg86X8rrTEQ3AtDyzQol5D_Q/exec';
 
   var ACCOUNT_META = {
-    ACC01: {
-      package: 'Smart Basic',
-      login: '100000052',
-      owner: 'willy',
-      server: 'TrijayaPratamaFutures-Live',
-      broker_label: 'PT. Trijaya Pratama Futures',
-      mode: 'Hedge · Access Server'
-    },
-    ACC02: {
-      package: 'Smart Gold',
-      login: null,
-      owner: null,
-      server: null,
-      broker_label: 'PT. Trijaya Pratama Futures',
-      mode: null
-    },
-    ACC03: {
-      package: 'Smart Pro',
-      login: null,
-      owner: null,
-      server: null,
-      broker_label: 'Exness Technologies Ltd',
-      mode: null
-    }
+    ACC01: { package: 'Smart Basic', login: '100000052', owner: 'willy', server: 'TrijayaPratamaFutures-Live', broker_label: 'PT. Trijaya Pratama Futures', mode: 'Hedge · Access Server' },
+    ACC02: { package: 'Smart Gold', login: null, owner: null, server: null, broker_label: 'PT. Trijaya Pratama Futures', mode: null },
+    ACC03: { package: 'Smart Pro', login: null, owner: null, server: null, broker_label: 'Exness Technologies Ltd', mode: null }
   };
 
   var demoAccounts = [
@@ -37,7 +16,9 @@
     { account_id:'ACC03', status:'DEMO', balance:645950.70, equity:656274.00, deposit_awal:60000.00, daily_profit:10323.30, total_profit:585950.70, daily_dd:2.1, total_penarikan:5540000.00, updated_at:'DEMO DATA', name:'Smart Pro' }
   ];
 
-  var cache = { accounts: null, history: null, isLive: false, fetchedAt: null, historyFetchedAt: null, error: null };
+  var cache = { accounts: null, history: null, isLive: false, fetchedAt: null, historyFetchedAt: null, error: null, inflightAccounts: null, inflightHistory: null };
+  var FRESH_MS = 25000;
+  var HISTORY_FRESH_MS = 90000;
 
   function formatUSD(value) {
     if (value === null || value === undefined || value === '' || !Number.isFinite(Number(value))) return '\u2014';
@@ -49,11 +30,8 @@
   }
   function escape(value) {
     return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   function apiUrl(action, extra) {
@@ -100,8 +78,12 @@
     };
   }
 
+  function cloneAccounts(list) {
+    return (list || []).map(function(a){ return Object.assign({}, a); });
+  }
+
   function fetchJson(url, timeoutMs) {
-    timeoutMs = timeoutMs || 12000;
+    timeoutMs = timeoutMs || 8000;
     return new Promise(function(resolve, reject) {
       var done = false;
       var timer = setTimeout(function() {
@@ -113,7 +95,7 @@
         method: 'GET',
         mode: 'cors',
         credentials: 'omit',
-        cache: 'no-store',
+        cache: 'default',
         headers: { 'Accept': 'application/json' }
       }).then(function(res) {
         if (done) return;
@@ -133,12 +115,9 @@
     });
   }
 
-  async function getAccounts(force) {
-    if (!force && cache.accounts && cache.fetchedAt && (Date.now() - cache.fetchedAt < 20000)) {
-      return cache.accounts.map(function(a){ return Object.assign({}, a); });
-    }
-    try {
-      var data = await fetchJson(apiUrl('live'), 12000);
+  function fetchAccountsNetwork() {
+    if (cache.inflightAccounts) return cache.inflightAccounts;
+    cache.inflightAccounts = fetchJson(apiUrl('live'), 8000).then(function(data) {
       if (!data || !data.ok || !Array.isArray(data.accounts)) throw new Error('Invalid live response');
       var list = data.accounts.map(normalizeAccount).filter(Boolean);
       if (!list.length) throw new Error('No accounts');
@@ -146,11 +125,36 @@
       cache.isLive = true;
       cache.fetchedAt = Date.now();
       cache.error = null;
-      return list.map(function(a){ return Object.assign({}, a); });
-    } catch (err) {
+      return list;
+    }).catch(function(err) {
       cache.error = err && err.message ? err.message : String(err);
       cache.isLive = false;
-      if (cache.accounts) return cache.accounts.map(function(a){ return Object.assign({}, a); });
+      throw err;
+    }).finally(function() {
+      cache.inflightAccounts = null;
+    });
+    return cache.inflightAccounts;
+  }
+
+  async function getAccounts(force) {
+    var age = cache.fetchedAt ? (Date.now() - cache.fetchedAt) : Infinity;
+
+    /* Fresh cache — return immediately */
+    if (!force && cache.accounts && age < FRESH_MS) {
+      return cloneAccounts(cache.accounts);
+    }
+
+    /* Stale cache — return now, refresh in background */
+    if (!force && cache.accounts && age < FRESH_MS * 4) {
+      fetchAccountsNetwork().catch(function(){});
+      return cloneAccounts(cache.accounts);
+    }
+
+    try {
+      var list = await fetchAccountsNetwork();
+      return cloneAccounts(list);
+    } catch (err) {
+      if (cache.accounts) return cloneAccounts(cache.accounts);
       return demoAccounts.map(function(a){ return normalizeAccount(a); });
     }
   }
@@ -209,21 +213,43 @@
     return results;
   }
 
+  function fetchHistoryNetwork() {
+    if (cache.inflightHistory) return cache.inflightHistory;
+    cache.inflightHistory = fetchJson(apiUrl('history', '?days=45'), 10000).then(function(data) {
+      if (!data || !data.ok || !Array.isArray(data.history)) throw new Error('Invalid history');
+      cache.history = equityHistoryToDailyProfit(data.history);
+      cache.historyFetchedAt = Date.now();
+      cache.isLive = true;
+      return cache.history;
+    }).finally(function() {
+      cache.inflightHistory = null;
+    });
+    return cache.inflightHistory;
+  }
+
   async function getDailyHistory(year, month, accountId) {
     try {
-      if (!cache.history || !cache.historyFetchedAt || (Date.now() - cache.historyFetchedAt > 60000)) {
-        var data = await fetchJson(apiUrl('history', '?days=45'), 15000);
-        if (!data || !data.ok || !Array.isArray(data.history)) throw new Error('Invalid history');
-        cache.history = equityHistoryToDailyProfit(data.history);
-        cache.historyFetchedAt = Date.now();
-        cache.isLive = true;
+      var age = cache.historyFetchedAt ? (Date.now() - cache.historyFetchedAt) : Infinity;
+      if (!cache.history || age > HISTORY_FRESH_MS) {
+        if (cache.history && age < HISTORY_FRESH_MS * 2) {
+          fetchHistoryNetwork().catch(function(){});
+        } else {
+          await fetchHistoryNetwork();
+        }
       }
       var prefix = year + '-' + String(month).padStart(2, '0');
-      return cache.history.filter(function(r) {
+      return (cache.history || []).filter(function(r) {
         if (accountId && r.account_id !== accountId) return false;
         return r.date.indexOf(prefix) === 0;
       }).map(function(r){ return Object.assign({}, r); });
     } catch (err) {
+      if (cache.history) {
+        var p = year + '-' + String(month).padStart(2, '0');
+        return cache.history.filter(function(r) {
+          if (accountId && r.account_id !== accountId) return false;
+          return r.date.indexOf(p) === 0;
+        }).map(function(r){ return Object.assign({}, r); });
+      }
       return generateDemoHistory(year, month, accountId);
     }
   }
@@ -231,6 +257,21 @@
   function getAccountMeta(id) {
     return ACCOUNT_META[id] ? Object.assign({}, ACCOUNT_META[id]) : null;
   }
+
+  /* Prefetch on load so first paint is faster */
+  try {
+    if (typeof document !== 'undefined') {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          getAccounts(false).catch(function(){});
+          getDailyHistory(new Date().getFullYear(), new Date().getMonth() + 1, null).catch(function(){});
+        });
+      } else {
+        getAccounts(false).catch(function(){});
+        getDailyHistory(new Date().getFullYear(), new Date().getMonth() + 1, null).catch(function(){});
+      }
+    }
+  } catch (e) {}
 
   w.SmartAIMT5 = {
     base: 'LIVE',

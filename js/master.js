@@ -1,4 +1,4 @@
-/* Master performance + live accounts — Smart AI Landing (v2) */
+/* Master performance + live accounts with circular gauges — Smart AI Landing */
 (function () {
   'use strict';
 
@@ -13,16 +13,11 @@
   };
 
   var packageLabels = { ACC01: 'SMART BASIC', ACC02: 'SMART GOLD', ACC03: 'SMART PRO' };
-  var colorStyles = {
-    ACC01: '',
-    ACC02: 'color:var(--gold)',
-    ACC03: 'color:var(--purple)'
-  };
+  var accentClass = { ACC01: 'basic', ACC02: 'gold', ACC03: 'pro' };
 
   function $(id) { return document.getElementById(id); }
   function qsa(sel, el) { return [].slice.call((el || document).querySelectorAll(sel)); }
 
-  /* Color level based on absolute $ profit magnitude */
   function level(profit) {
     if (profit == null || !Number.isFinite(profit)) return 'none';
     if (profit < 0) return 'loss';
@@ -37,8 +32,8 @@
     var abs = Math.abs(n);
     var s;
     if (abs >= 1000000) s = (abs / 1000000).toFixed(2).replace(/\.00$/, '') + 'M';
-    else if (abs >= 1000) s = Math.round(abs).toLocaleString('en-US');
-    else s = abs.toFixed(0);
+    else if (abs >= 1000) s = abs.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    else s = abs.toFixed(2);
     if (forceSign || n > 0) return (n >= 0 ? '+' : '-') + '$' + s;
     if (n < 0) return '-$' + s;
     return '$' + s;
@@ -52,8 +47,45 @@
   function formatPenarikan(v) {
     if (v == null || !Number.isFinite(Number(v))) return '\u2014';
     var n = Number(v);
-    if (n >= 1000000) return '$' + (n / 1000000).toFixed(2).replace(/\.00$/, '') + 'M';
+    if (n >= 1000000) return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 2 });
     return SmartAIMT5.formatUSD(n);
+  }
+
+  function formatTime(iso) {
+    if (!iso) return '\u2014';
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString('id-ID', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        timeZone: 'Asia/Jakarta'
+      }) + ' WIB';
+    } catch (e) { return String(iso); }
+  }
+
+  /* SVG circular progress (0-100 clamped for display) */
+  function ringSVG(pct, accent) {
+    var r = 36;
+    var c = 2 * Math.PI * r;
+    var clamped = Math.max(0, Math.min(Math.abs(pct), 100));
+    var offset = c - (clamped / 100) * c;
+    var stroke = accent === 'gold' ? '#fbbf24' : accent === 'pro' ? '#a78bfa' : '#2dd4bf';
+    var neg = pct < 0;
+    if (neg) stroke = '#f87171';
+
+    return (
+      '<svg class="ring-svg" viewBox="0 0 88 88" width="88" height="88">' +
+        '<circle class="ring-bg" cx="44" cy="44" r="' + r + '" fill="none" stroke-width="7"/>' +
+        '<circle class="ring-fg" cx="44" cy="44" r="' + r + '" fill="none" stroke-width="7"' +
+          ' stroke="' + stroke + '" stroke-linecap="round"' +
+          ' stroke-dasharray="' + c.toFixed(2) + '" stroke-dashoffset="' + offset.toFixed(2) + '"' +
+          ' transform="rotate(-90 44 44)"/>' +
+        '<text x="44" y="48" text-anchor="middle" class="ring-text" fill="' + stroke + '">' +
+          fmtPct(pct) +
+        '</text>' +
+      '</svg>'
+    );
   }
 
   /* ========== LIVE ACCOUNTS ========== */
@@ -72,56 +104,73 @@
 
     grid.innerHTML = accounts.map(function (a) {
       var id = a.account_id;
+      var cls = accentClass[id] || 'basic';
       var online = String(a.status || '').toUpperCase() === 'ONLINE';
       var statusText = String(a.status || 'WAITING').toUpperCase();
       var equity = Number(a.equity) || 0;
       var daily = Number(a.daily_profit) || 0;
       var dailyReturn = equity > 0 ? (daily / equity * 100) : 0;
-      var returnText = fmtPct(dailyReturn);
-      var profitClass = daily >= 0 ? 'profit' : 'loss-val';
+      var dd = Number(a.daily_dd);
+      if (!Number.isFinite(dd)) dd = 0;
+      var stamp = formatTime(a.updated_at);
 
       return (
-        '<div class="perf-card reveal' + (online ? ' is-online' : '') + '">' +
-          '<div class="perf-card-top">' +
-            '<span class="perf-label" style="' + (colorStyles[id] || '') + '">' + (packageLabels[id] || a.name || id) + '</span>' +
+        '<article class="acc-card ' + cls + (online ? ' is-online' : '') + '">' +
+          '<div class="acc-top">' +
+            '<span class="acc-pkg ' + cls + '">' + (packageLabels[id] || a.name || id) + '</span>' +
             '<span class="mt5-badge">MT5 LIVE</span>' +
           '</div>' +
-          '<div class="perf-account">' +
+          '<div class="acc-id">' +
             SmartAIMT5.escape(id) +
-            ' <span class="status-dot ' + (online ? 'online' : 'offline') + '">' +
-              '<i></i> ' + SmartAIMT5.escape(statusText) +
-            '</span>' +
+            ' <span class="status-dot ' + (online ? 'online' : 'offline') + '"><i></i> ' +
+            SmartAIMT5.escape(statusText) + '</span>' +
           '</div>' +
-          '<div class="perf-stats">' +
-            '<div class="perf-stat">' +
-              '<div class="label">Deposit</div>' +
-              '<div class="value">' + SmartAIMT5.formatUSD(a.deposit_awal) + '</div>' +
-            '</div>' +
-            '<div class="perf-stat">' +
-              '<div class="label">Equity</div>' +
-              '<div class="value">' + SmartAIMT5.formatUSD(a.equity) + '</div>' +
-            '</div>' +
-            '<div class="perf-stat">' +
-              '<div class="label">Daily Profit</div>' +
-              '<div class="value ' + profitClass + '">' + fmtMoney(daily, true) + '</div>' +
-            '</div>' +
-            '<div class="perf-stat">' +
-              '<div class="label">Penarikan</div>' +
-              '<div class="value">' + formatPenarikan(a.total_penarikan) + '</div>' +
+
+          '<div class="acc-metrics">' +
+            '<div class="acc-metric"><div class="ml">Deposit Awal</div><div class="mv">' +
+              SmartAIMT5.formatUSD(a.deposit_awal) + '</div></div>' +
+            '<div class="acc-metric"><div class="ml">Equity Saat Ini</div><div class="mv">' +
+              SmartAIMT5.formatUSD(a.equity) + '</div></div>' +
+            '<div class="acc-metric"><div class="ml">Daily Profit</div><div class="mv ' +
+              (daily >= 0 ? 'up' : 'down') + '">' + fmtMoney(daily, true) + '</div></div>' +
+            '<div class="acc-metric"><div class="ml">Total Penarikan</div><div class="mv">' +
+              formatPenarikan(a.total_penarikan) + '</div></div>' +
+          '</div>' +
+
+          '<div class="daily-return-box">' +
+            '<div class="dr-label">Daily Return</div>' +
+            '<div class="dr-value ' + (dailyReturn >= 0 ? 'up' : 'down') + '">' + fmtPct(dailyReturn) + '</div>' +
+            '<div class="dr-hint">Daily Profit \u00f7 Equity Saat Ini</div>' +
+          '</div>' +
+
+          '<div class="gauge-row">' +
+            '<div class="gauge-ring">' + ringSVG(dailyReturn, cls) + '</div>' +
+            '<div class="gauge-detail">' +
+              '<div class="gd-title">Persentase terhadap Equity Saat Ini</div>' +
+              '<div class="gd-line"><span>Daily Profit:</span> <b class="' +
+                (daily >= 0 ? 'up' : 'down') + '">' + fmtMoney(daily, true) + '</b></div>' +
+              '<div class="gd-line"><span>Equity Saat Ini:</span> <b>' +
+                SmartAIMT5.formatUSD(a.equity) + '</b></div>' +
+              '<div class="gd-line"><span>Daily Drawdown:</span> <b>' +
+                dd.toFixed(2) + '%</b></div>' +
             '</div>' +
           '</div>' +
-          '<div class="daily-return">' +
-            '<span>Daily Return</span>' +
-            '<span class="value ' + (dailyReturn >= 0 ? 'up' : 'down') + '">' + returnText + '</span>' +
+
+          '<div class="acc-bar">' +
+            '<div class="acc-bar-track">' +
+              '<div class="acc-bar-fill ' + cls + '" style="width:' +
+                Math.min(Math.abs(dailyReturn) * 4, 100).toFixed(1) + '%"></div>' +
+            '</div>' +
           '</div>' +
-        '</div>'
+
+          '<div class="acc-foot">Update: ' + stamp + '</div>' +
+        '</article>'
       );
     }).join('');
   }
 
-  /* ========== BUILD CALENDAR DATA FROM HISTORY ========== */
+  /* ========== CALENDAR DATA ========== */
   function buildLiveDataset(history) {
-    // Aggregate daily profit (USD) per date
     var byDay = {};
     (history || []).forEach(function (h) {
       if (!h || !h.date) return;
@@ -131,7 +180,7 @@
       byDay[h.date] += p;
     });
 
-    var days = {}; // date -> profit USD
+    var days = {};
     Object.keys(byDay).forEach(function (d) {
       days[d] = Math.round(byDay[d] * 100) / 100;
     });
@@ -141,14 +190,11 @@
     var neg = vals.filter(function (v) { return v < 0; }).length;
     var totalProfit = vals.reduce(function (a, b) { return a + b; }, 0);
 
-    // This week = last 7 days that have data
     var sorted = Object.keys(days).sort();
     var weekKeys = sorted.slice(-7);
     var weekProfit = weekKeys.reduce(function (a, k) { return a + (days[k] || 0); }, 0);
-
     var win = vals.length ? Math.round((pos / vals.length) * 1000) / 10 : 0;
 
-    // Find worst day
     var worst = null, worstVal = 0;
     Object.keys(days).forEach(function (k) {
       if (days[k] < worstVal) { worstVal = days[k]; worst = k; }

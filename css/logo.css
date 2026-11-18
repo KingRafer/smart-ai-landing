@@ -1,0 +1,27 @@
+/* Brand logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.logo img,
+.logo .logo-img,
+.logo-img {
+  height: 42px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+footer .logo img,
+footer .logo-img {
+  height: 36px;
+}
+.sidebar-brand .logo-img {
+  height: 34px;
+}
+/* When logo image is present, hide pure text mark if any */
+.logo.has-img { font-size: 0; }

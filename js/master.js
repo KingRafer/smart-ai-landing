@@ -1,37 +1,17 @@
-/* Master performance + live accounts — Smart AI Landing */
+/* Master performance + live accounts — Smart AI Landing (v2) */
 (function () {
   'use strict';
-
-  var BASE = 20000; // USC for % display (same visual scale as before)
-
-  // Fallback sample (used only if API completely fails)
-  var FALLBACK = {
-    all: {
-      days: {
-        '2026-09-01': 2.1, '2026-09-02': 4.5, '2026-09-03': 1.2, '2026-09-04': 6.8,
-        '2026-09-05': 3.4, '2026-09-08': 9.2, '2026-09-09': 5.1, '2026-09-10': 2.8,
-        '2026-09-11': 11.4, '2026-09-12': 7.6, '2026-09-15': 3.9, '2026-09-16': 8.3,
-        '2026-09-17': 1.5, '2026-09-18': 14.2, '2026-09-19': 4.7, '2026-09-22': -8.7,
-        '2026-09-23': 6.1, '2026-09-24': 2.3, '2026-09-25': 10.5, '2026-09-26': 5.8,
-        '2026-09-29': 9.5
-      },
-      realized: 256.1, week: 9.5, win: 64.8, trades: 645,
-      realizedUsc: 51215, weekUsc: 1903
-    }
-  };
 
   var state = {
     ds: 'all',
     view: 'calendar',
     year: new Date().getFullYear(),
-    month: new Date().getMonth(), // 0-based
-    liveDays: {},      // { 'YYYY-MM-DD': pct }
+    month: new Date().getMonth(),
     liveStats: null,
     accounts: null,
     isLive: false
   };
 
-  var packageMap = { ACC01: 'basic', ACC02: 'gold', ACC03: 'pro' };
   var packageLabels = { ACC01: 'SMART BASIC', ACC02: 'SMART GOLD', ACC03: 'SMART PRO' };
   var colorStyles = {
     ACC01: '',
@@ -42,23 +22,31 @@
   function $(id) { return document.getElementById(id); }
   function qsa(sel, el) { return [].slice.call((el || document).querySelectorAll(sel)); }
 
-  function level(pct) {
-    if (pct == null) return 'none';
-    if (pct < 0) return 'loss';
-    if (pct < 3) return 'lv1';
-    if (pct < 8) return 'lv2';
-    if (pct < 15) return 'lv3';
+  /* Color level based on absolute $ profit magnitude */
+  function level(profit) {
+    if (profit == null || !Number.isFinite(profit)) return 'none';
+    if (profit < 0) return 'loss';
+    if (profit < 500) return 'lv1';
+    if (profit < 2000) return 'lv2';
+    if (profit < 8000) return 'lv3';
     return 'lv4';
+  }
+
+  function fmtMoney(n, forceSign) {
+    if (n == null || !Number.isFinite(n)) return '\u2014';
+    var abs = Math.abs(n);
+    var s;
+    if (abs >= 1000000) s = (abs / 1000000).toFixed(2).replace(/\.00$/, '') + 'M';
+    else if (abs >= 1000) s = Math.round(abs).toLocaleString('en-US');
+    else s = abs.toFixed(0);
+    if (forceSign || n > 0) return (n >= 0 ? '+' : '-') + '$' + s;
+    if (n < 0) return '-$' + s;
+    return '$' + s;
   }
 
   function fmtPct(n) {
     if (n == null || !Number.isFinite(n)) return '\u2014';
-    return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
-  }
-
-  function fmtUsc(n) {
-    if (n == null || !Number.isFinite(n)) return '\u2014';
-    return Math.round(n).toLocaleString('en-US') + ' USC';
+    return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
   }
 
   function formatPenarikan(v) {
@@ -74,7 +62,7 @@
     if (!grid) return;
 
     if (!accounts || !accounts.length) {
-      grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1">Tidak ada data akun.</p>';
+      grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem">Tidak ada data akun.</p>';
       return;
     }
 
@@ -89,98 +77,139 @@
       var equity = Number(a.equity) || 0;
       var daily = Number(a.daily_profit) || 0;
       var dailyReturn = equity > 0 ? (daily / equity * 100) : 0;
-      var returnText = (dailyReturn >= 0 ? '+' : '') + dailyReturn.toFixed(2) + '%';
-      var profitClass = daily >= 0 ? 'profit' : '';
+      var returnText = fmtPct(dailyReturn);
+      var profitClass = daily >= 0 ? 'profit' : 'loss-val';
 
       return (
-        '<div class="perf-card reveal">' +
-          '<div style="display:flex;justify-content:space-between">' +
+        '<div class="perf-card reveal' + (online ? ' is-online' : '') + '">' +
+          '<div class="perf-card-top">' +
             '<span class="perf-label" style="' + (colorStyles[id] || '') + '">' + (packageLabels[id] || a.name || id) + '</span>' +
             '<span class="mt5-badge">MT5 LIVE</span>' +
           '</div>' +
-          '<div class="perf-account">' + SmartAIMT5.escape(id) +
-            ' <span class="' + (online ? 'online-text' : '') + '">\u25CF ' + SmartAIMT5.escape(statusText) + '</span></div>' +
+          '<div class="perf-account">' +
+            SmartAIMT5.escape(id) +
+            ' <span class="status-dot ' + (online ? 'online' : 'offline') + '">' +
+              '<i></i> ' + SmartAIMT5.escape(statusText) +
+            '</span>' +
+          '</div>' +
           '<div class="perf-stats">' +
-            '<div class="perf-stat"><div class="label">Deposit</div><div class="value">' + SmartAIMT5.formatUSD(a.deposit_awal) + '</div></div>' +
-            '<div class="perf-stat"><div class="label">Equity</div><div class="value">' + SmartAIMT5.formatUSD(a.equity) + '</div></div>' +
-            '<div class="perf-stat"><div class="label">Daily Profit</div><div class="value ' + profitClass + '">' +
-              (daily >= 0 ? '+' : '') + SmartAIMT5.formatUSD(a.daily_profit).replace('$', '') + '</div></div>' +
-            '<div class="perf-stat"><div class="label">Penarikan</div><div class="value">' + formatPenarikan(a.total_penarikan) + '</div></div>' +
+            '<div class="perf-stat">' +
+              '<div class="label">Deposit</div>' +
+              '<div class="value">' + SmartAIMT5.formatUSD(a.deposit_awal) + '</div>' +
+            '</div>' +
+            '<div class="perf-stat">' +
+              '<div class="label">Equity</div>' +
+              '<div class="value">' + SmartAIMT5.formatUSD(a.equity) + '</div>' +
+            '</div>' +
+            '<div class="perf-stat">' +
+              '<div class="label">Daily Profit</div>' +
+              '<div class="value ' + profitClass + '">' + fmtMoney(daily, true) + '</div>' +
+            '</div>' +
+            '<div class="perf-stat">' +
+              '<div class="label">Penarikan</div>' +
+              '<div class="value">' + formatPenarikan(a.total_penarikan) + '</div>' +
+            '</div>' +
           '</div>' +
           '<div class="daily-return">' +
             '<span>Daily Return</span>' +
-            '<span class="value">' + returnText + '</span>' +
+            '<span class="value ' + (dailyReturn >= 0 ? 'up' : 'down') + '">' + returnText + '</span>' +
           '</div>' +
         '</div>'
       );
     }).join('');
   }
 
-  /* ========== CALENDAR STATS FROM LIVE HISTORY ========== */
-  function buildLiveDataset(history, accounts) {
-    // history: [{date, profit, account_id}, ...]
+  /* ========== BUILD CALENDAR DATA FROM HISTORY ========== */
+  function buildLiveDataset(history) {
+    // Aggregate daily profit (USD) per date
     var byDay = {};
     (history || []).forEach(function (h) {
       if (!h || !h.date) return;
-      var p = Number(h.profit) || 0;
+      var p = Number(h.profit);
+      if (!Number.isFinite(p)) return;
       if (!byDay[h.date]) byDay[h.date] = 0;
       byDay[h.date] += p;
     });
 
-    // Convert absolute profit (USD) → % of BASE for visual consistency with old design
-    var daysPct = {};
+    var days = {}; // date -> profit USD
     Object.keys(byDay).forEach(function (d) {
-      daysPct[d] = Math.round((byDay[d] / BASE) * 1000) / 10; // 1 decimal
+      days[d] = Math.round(byDay[d] * 100) / 100;
     });
 
-    var vals = Object.keys(daysPct).map(function (k) { return daysPct[k]; });
+    var vals = Object.keys(days).map(function (k) { return days[k]; });
     var pos = vals.filter(function (v) { return v > 0; }).length;
     var neg = vals.filter(function (v) { return v < 0; }).length;
-    var sum = vals.reduce(function (a, b) { return a + b; }, 0);
-    var realizedUsc = Math.round(sum / 100 * BASE);
+    var totalProfit = vals.reduce(function (a, b) { return a + b; }, 0);
 
-    // Approximate "this week" (last 7 calendar days that have data)
-    var sortedDates = Object.keys(daysPct).sort();
-    var weekKeys = sortedDates.slice(-7);
-    var weekSum = weekKeys.reduce(function (a, k) { return a + (daysPct[k] || 0); }, 0);
-    var weekUsc = Math.round(weekSum / 100 * BASE);
+    // This week = last 7 days that have data
+    var sorted = Object.keys(days).sort();
+    var weekKeys = sorted.slice(-7);
+    var weekProfit = weekKeys.reduce(function (a, k) { return a + (days[k] || 0); }, 0);
 
     var win = vals.length ? Math.round((pos / vals.length) * 1000) / 10 : 0;
 
+    // Find worst day
+    var worst = null, worstVal = 0;
+    Object.keys(days).forEach(function (k) {
+      if (days[k] < worstVal) { worstVal = days[k]; worst = k; }
+    });
+
     return {
-      days: daysPct,
-      realized: Math.round(sum * 10) / 10,
-      week: Math.round(weekSum * 10) / 10,
+      days: days,
+      total: totalProfit,
+      week: weekProfit,
       win: win,
-      trades: vals.length, // using trading days as proxy
-      realizedUsc: realizedUsc,
-      weekUsc: weekUsc,
+      tradingDays: vals.length,
+      pos: pos,
+      neg: neg,
+      worst: worst,
+      worstVal: worstVal,
       meta: pos + ' green \u00b7 ' + neg + ' red \u00b7 ' + (vals.length - pos - neg) + ' flat'
     };
   }
 
   function updateStats(d) {
-    if (!d) d = FALLBACK.all;
+    if (!d) {
+      ['m-real','m-real-usc','m-week','m-week-usc','m-win','m-trades'].forEach(function(id){
+        var el = $(id); if (el) el.textContent = '\u2014';
+      });
+      return;
+    }
     var real = $('m-real');
     var realUsc = $('m-real-usc');
     var week = $('m-week');
     var weekUsc = $('m-week-usc');
     var win = $('m-win');
     var trades = $('m-trades');
-    var base = $('m-base');
-    if (real) real.textContent = fmtPct(d.realized);
-    if (realUsc) realUsc.textContent = fmtUsc(d.realizedUsc);
-    if (week) week.textContent = fmtPct(d.week);
-    if (weekUsc) weekUsc.textContent = fmtUsc(d.weekUsc);
+
+    if (real) {
+      real.textContent = fmtMoney(d.total, true);
+      real.className = d.total >= 0 ? 'up' : 'down';
+    }
+    if (realUsc) realUsc.textContent = d.tradingDays + ' days';
+    if (week) {
+      week.textContent = fmtMoney(d.week, true);
+      week.className = d.week >= 0 ? 'up' : 'down';
+    }
+    if (weekUsc) weekUsc.textContent = 'last 7 days';
     if (win) win.textContent = (d.win != null ? d.win.toFixed(1) : '\u2014') + '%';
-    if (trades) trades.textContent = (d.trades || 0) + ' trading days';
-    if (base) base.textContent = 'Base ' + BASE.toLocaleString('en-US') + ' USC = 100%';
+    if (trades) trades.textContent = (d.tradingDays || 0) + ' trading days';
+
+    var worstEl = $('m-worst');
+    if (worstEl) {
+      if (d.worst) {
+        var parts = d.worst.split('-');
+        worstEl.textContent = 'Worst day ' + fmtMoney(d.worstVal, true) + ' (' + parts[2] + '/' + parts[1] + ')';
+      } else {
+        worstEl.textContent = 'deposits not shown';
+      }
+    }
   }
 
   function renderCalendar(d) {
     var wrap = $('cal-view');
     if (!wrap) return;
-    d = d || FALLBACK.all;
+    d = d || { days: {} };
     var y = state.year, m = state.month;
     var first = new Date(y, m, 1);
     var startDay = first.getDay();
@@ -194,14 +223,21 @@
       html += '<div class="cal-head">' + h + '</div>';
     });
     for (var i = 0; i < startDay; i++) html += '<div class="cal-cell empty"></div>';
+
+    var today = new Date();
+    var isCurrentMonth = today.getFullYear() === y && today.getMonth() === m;
+
     for (var day = 1; day <= daysInMonth; day++) {
       var key = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-      var pct = d.days[key];
-      var lv = level(pct);
-      var label = pct == null ? '' : fmtPct(pct);
-      html += '<div class="cal-cell ' + lv + '" title="' + key + (pct != null ? ': ' + label : '') + '">';
+      var profit = d.days[key];
+      var lv = level(profit);
+      var isToday = isCurrentMonth && day === today.getDate();
+      var label = profit == null ? '' : fmtMoney(profit, true);
+
+      html += '<div class="cal-cell ' + lv + (isToday ? ' today' : '') + '" title="' +
+        key + (profit != null ? ': ' + label : '') + '">';
       html += '<span class="cal-day">' + day + '</span>';
-      if (pct != null) html += '<span class="cal-pct">' + label + '</span>';
+      if (profit != null) html += '<span class="cal-pct">' + label + '</span>';
       html += '</div>';
     }
     html += '</div>';
@@ -214,7 +250,7 @@
   function renderWeekly(d) {
     var wrap = $('cal-view');
     if (!wrap) return;
-    d = d || FALLBACK.all;
+    d = d || { days: {} };
     var y = state.year, m = state.month;
     var daysInMonth = new Date(y, m + 1, 0).getDate();
     var weeks = [];
@@ -243,7 +279,7 @@
       var lv = level(avg);
       html += '<div class="week-row ' + lv + '">';
       html += '<span class="week-label">' + w.label + '</span>';
-      html += '<span class="week-pct">' + (avg == null ? '\u2014' : fmtPct(avg)) + '</span>';
+      html += '<span class="week-pct">' + (avg == null ? '\u2014' : fmtMoney(avg, true)) + '</span>';
       html += '</div>';
     });
     html += '</div>';
@@ -254,8 +290,7 @@
   }
 
   function getActiveDataset() {
-    if (state.liveStats) return state.liveStats;
-    return FALLBACK.all;
+    return state.liveStats || { days: {}, total: 0, week: 0, win: 0, tradingDays: 0, meta: '' };
   }
 
   function render() {
@@ -264,13 +299,13 @@
     if (state.view === 'weekly') renderWeekly(d);
     else renderCalendar(d);
 
-    // Update footer
     var asof = $('m-asof');
     if (asof) {
       var now = new Date();
       var opts = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' };
       var ts = now.toLocaleString('en-GB', opts);
-      asof.textContent = 'as of ' + ts + ' WIB \u00b7 ' + (state.isLive ? 'live feed' : 'demo / cached');
+      asof.innerHTML = 'as of ' + ts + ' WIB \u00b7 <span class="' + (state.isLive ? 'live-tag' : 'demo-tag') + '">' +
+        (state.isLive ? 'LIVE FEED' : 'DEMO / CACHED') + '</span>';
     }
   }
 
@@ -280,25 +315,31 @@
       return;
     }
 
+    var grid = document.querySelector('.perf-grid');
+    if (grid && !state.accounts) {
+      grid.innerHTML = '<div class="perf-loading"><div class="spin"></div><div>Memuat data live\u2026</div></div>';
+    }
+
     try {
-      // Accounts
       var accounts = await SmartAIMT5.getAccounts(true);
       state.accounts = accounts;
       state.isLive = SmartAIMT5.isLive();
       renderAccounts(accounts);
 
-      // History for current month + selected product
       var accId = null;
       if (state.ds === 'basic') accId = 'ACC01';
       else if (state.ds === 'gold') accId = 'ACC02';
       else if (state.ds === 'pro') accId = 'ACC03';
 
       var history = await SmartAIMT5.getDailyHistory(state.year, state.month + 1, accId);
-      state.liveStats = buildLiveDataset(history, accounts);
+      state.liveStats = buildLiveDataset(history);
       state.isLive = SmartAIMT5.isLive() || state.isLive;
       render();
     } catch (e) {
-      console.warn('Live load failed, using fallback', e);
+      console.warn('Live load failed', e);
+      if (grid && !state.accounts) {
+        grid.innerHTML = '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:2rem">Gagal memuat data. Coba refresh.</p>';
+      }
       render();
     }
   }
@@ -329,11 +370,10 @@
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
         state.ds = btn.getAttribute('data-ds') || 'all';
-        loadLiveData(); // re-fetch with new filter
+        loadLiveData();
       });
     });
 
-    // Month navigation
     var navBtns = qsa('.cal-nav button');
     if (navBtns.length >= 2) {
       navBtns[0].disabled = false;
@@ -350,13 +390,8 @@
       };
     }
 
-    // Initial load
     loadLiveData();
-
-    // Auto refresh every 45s
-    setInterval(function () {
-      loadLiveData();
-    }, 45000);
+    setInterval(loadLiveData, 45000);
   }
 
   if (document.readyState === 'loading') {

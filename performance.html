@@ -9,22 +9,6 @@
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/master.css">
-    <style>
-      .perf-grid { min-height: 180px; }
-      .perf-loading {
-        grid-column: 1 / -1;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: .75rem; padding: 2.5rem; color: var(--text-muted);
-      }
-      .perf-loading .spin {
-        width: 28px; height: 28px;
-        border: 3px solid var(--border);
-        border-top-color: var(--cyan);
-        border-radius: 50%;
-        animation: spin .7s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
   </head>
   <body>
     <nav class="navbar">
@@ -75,7 +59,6 @@
           <div class="section-label reveal">Live Performance</div>
           <h2 class="section-title reveal">Data aktual. Bukan sekadar janji.</h2>
 
-          <!-- Live account cards (filled by JS) -->
           <div class="perf-grid">
             <div class="perf-loading">
               <div class="spin"></div>
@@ -87,7 +70,7 @@
             <div class="master-head">
               <div>
                 <h3>Master performance</h3>
-                <p class="master-sub" id="m-base">Base 20,000 USC = 100%</p>
+                <p class="master-sub">Profit harian dari equity change (live)</p>
               </div>
               <div class="master-tabs" role="tablist">
                 <button type="button" class="active" data-view="calendar" role="tab" aria-selected="true">Calendar</button>
@@ -96,19 +79,19 @@
             </div>
             <div class="master-pick" id="master-pick" role="tablist" aria-label="Pilih produk">
               <button type="button" class="active" data-ds="all" role="tab" aria-selected="true">Semua</button>
-              <button type="button" data-ds="basic" role="tab" aria-selected="false" style="--accent:var(--cyan)">SMART BASIC</button>
-              <button type="button" data-ds="gold" role="tab" aria-selected="false" style="--accent:var(--gold)">SMART GOLD</button>
-              <button type="button" data-ds="pro" role="tab" aria-selected="false" style="--accent:var(--purple)">SMART PRO</button>
+              <button type="button" data-ds="basic" role="tab" aria-selected="false">SMART BASIC</button>
+              <button type="button" data-ds="gold" role="tab" aria-selected="false">SMART GOLD</button>
+              <button type="button" data-ds="pro" role="tab" aria-selected="false">SMART PRO</button>
             </div>
             <div class="master-body">
               <div class="master-stats">
                 <div class="m-stat">
                   <span class="m-label">Realized profit</span>
-                  <span class="m-value up"><span id="m-real">—</span><small id="m-real-usc">—</small></span>
+                  <span class="m-value"><span id="m-real">—</span><small id="m-real-usc">—</small></span>
                 </div>
                 <div class="m-stat">
                   <span class="m-label">This week so far</span>
-                  <span class="m-value up"><span id="m-week">—</span><small id="m-week-usc">—</small></span>
+                  <span class="m-value"><span id="m-week">—</span><small id="m-week-usc">—</small></span>
                 </div>
                 <div class="m-stat">
                   <span class="m-label">Win rate</span>
@@ -128,10 +111,10 @@
                 </div>
                 <div id="cal-view"></div>
                 <div class="cal-legend">
-                  <span><i class="lv1"></i>under +3%</span>
-                  <span><i class="lv2"></i>+3 to +8%</span>
-                  <span><i class="lv3"></i>+8 to +15%</span>
-                  <span><i class="lv4"></i>above +15%</span>
+                  <span><i class="lv1"></i>under $500</span>
+                  <span><i class="lv2"></i>$500–2k</span>
+                  <span><i class="lv3"></i>$2k–8k</span>
+                  <span><i class="lv4"></i>above $8k</span>
                   <span><i class="loss"></i>loss day</span>
                   <span><i class="none"></i>no trading</span>
                 </div>

@@ -9,6 +9,22 @@
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/master.css">
+    <style>
+      .perf-grid { min-height: 180px; }
+      .perf-loading {
+        grid-column: 1 / -1;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: .75rem; padding: 2.5rem; color: var(--text-muted);
+      }
+      .perf-loading .spin {
+        width: 28px; height: 28px;
+        border: 3px solid var(--border);
+        border-top-color: var(--cyan);
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
     <nav class="navbar">
@@ -58,92 +74,15 @@
         <div class="container">
           <div class="section-label reveal">Live Performance</div>
           <h2 class="section-title reveal">Data aktual. Bukan sekadar janji.</h2>
+
+          <!-- Live account cards (filled by JS) -->
           <div class="perf-grid">
-            <div class="perf-card reveal">
-              <div style="display:flex;justify-content:space-between">
-                <span class="perf-label">SMART BASIC</span><span class="mt5-badge">MT5 LIVE</span>
-              </div>
-              <div class="perf-account">ACC01 <span class="online-text">● ONLINE</span></div>
-              <div class="perf-stats">
-                <div class="perf-stat">
-                  <div class="label">Deposit</div>
-                  <div class="value">$10,000</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Equity</div>
-                  <div class="value">$76,999</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Daily Profit</div>
-                  <div class="value profit">+$100.80</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Penarikan</div>
-                  <div class="value">$73,862</div>
-                </div>
-              </div>
-              <div class="daily-return">
-                <span>Daily Return</span>
-                <span class="value">+0.13%</span>
-              </div>
-            </div>
-            <div class="perf-card reveal">
-              <div style="display:flex;justify-content:space-between">
-                <span class="perf-label" style="color:var(--gold)">SMART GOLD</span><span class="mt5-badge">MT5 LIVE</span>
-              </div>
-              <div class="perf-account">ACC02 <span class="online-text">● ONLINE</span></div>
-              <div class="perf-stats">
-                <div class="perf-stat">
-                  <div class="label">Deposit</div>
-                  <div class="value">$10,000</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Equity</div>
-                  <div class="value">$102,254</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Daily Profit</div>
-                  <div class="value profit">+$40.30</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Penarikan</div>
-                  <div class="value">$28,000</div>
-                </div>
-              </div>
-              <div class="daily-return">
-                <span>Daily Return</span>
-                <span class="value">+0.04%</span>
-              </div>
-            </div>
-            <div class="perf-card reveal">
-              <div style="display:flex;justify-content:space-between">
-                <span class="perf-label" style="color:var(--purple)">SMART PRO</span><span class="mt5-badge">MT5 LIVE</span>
-              </div>
-              <div class="perf-account">ACC03 <span class="online-text">● ONLINE</span></div>
-              <div class="perf-stats">
-                <div class="perf-stat">
-                  <div class="label">Deposit</div>
-                  <div class="value">$60,000</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Equity</div>
-                  <div class="value">$625,625</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Daily Profit</div>
-                  <div class="value profit">+$1,378</div>
-                </div>
-                <div class="perf-stat">
-                  <div class="label">Penarikan</div>
-                  <div class="value">$5.54M</div>
-                </div>
-              </div>
-              <div class="daily-return">
-                <span>Daily Return</span>
-                <span class="value">+0.22%</span>
-              </div>
+            <div class="perf-loading">
+              <div class="spin"></div>
+              <div>Memuat data live…</div>
             </div>
           </div>
+
           <div class="master-card reveal" id="master-card">
             <div class="master-head">
               <div>
@@ -165,26 +104,26 @@
               <div class="master-stats">
                 <div class="m-stat">
                   <span class="m-label">Realized profit</span>
-                  <span class="m-value up"><span id="m-real">+256.1%</span><small id="m-real-usc">51,215 USC</small></span>
+                  <span class="m-value up"><span id="m-real">—</span><small id="m-real-usc">—</small></span>
                 </div>
                 <div class="m-stat">
                   <span class="m-label">This week so far</span>
-                  <span class="m-value up"><span id="m-week">+9.5%</span><small id="m-week-usc">1,903 USC</small></span>
+                  <span class="m-value up"><span id="m-week">—</span><small id="m-week-usc">—</small></span>
                 </div>
                 <div class="m-stat">
                   <span class="m-label">Win rate</span>
-                  <span class="m-value"><span id="m-win">64.8%</span><small id="m-trades">645 closed trades</small></span>
+                  <span class="m-value"><span id="m-win">—</span><small id="m-trades">—</small></span>
                 </div>
               </div>
               <div class="master-main">
                 <div class="cal-top">
                   <div>
-                    <div class="cal-month" id="cal-month">September 2026</div>
+                    <div class="cal-month" id="cal-month">—</div>
                     <div class="cal-meta" id="cal-meta"></div>
                   </div>
                   <div class="cal-nav">
-                    <button type="button" aria-label="Bulan sebelumnya" disabled>&#8249;</button>
-                    <button type="button" aria-label="Bulan berikutnya" disabled>&#8250;</button>
+                    <button type="button" aria-label="Bulan sebelumnya">&#8249;</button>
+                    <button type="button" aria-label="Bulan berikutnya">&#8250;</button>
                   </div>
                 </div>
                 <div id="cal-view"></div>
@@ -199,8 +138,8 @@
               </div>
             </div>
             <div class="master-foot">
-              <span id="m-asof">as of 29 Sep 2026, 09:30 WIB &middot; live feed</span>
-              <span id="m-worst">Worst day &minus;8.7% (22 Sep) &middot; deposits not shown</span>
+              <span id="m-asof">Memuat data live…</span>
+              <span id="m-worst">deposits not shown</span>
             </div>
           </div>
         </div>
@@ -237,6 +176,7 @@
     </footer>
     <a href="https://wa.me/6282137585596" class="wa-float" target="_blank" rel="noopener">WHATSAPP</a>
     <script src="js/site.js"></script>
+    <script src="js/mt5-api.js"></script>
     <script src="js/master.js"></script>
     <script src="js/animations.js"></script>
   </body>

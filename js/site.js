@@ -1,17 +1,19 @@
 const html = document.documentElement;
 const saved = localStorage.getItem('theme');
 if (saved) html.setAttribute('data-theme', saved);
-document.getElementById('theme-toggle').addEventListener('click', () => {
+var themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) themeBtn.addEventListener('click', () => {
   const n = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', n);
   localStorage.setItem('theme', n);
 });
 const hamburger = document.getElementById('hamburger'), mobileMenu = document.getElementById('mobile-menu');
-hamburger.addEventListener('click', () => {
+if (hamburger && mobileMenu) hamburger.addEventListener('click', () => {
   const open = mobileMenu.classList.toggle('open');
   document.body.style.overflow = open ? 'hidden' : '';
 });
 function closeMenu() {
+  if (!mobileMenu) return;
   mobileMenu.classList.remove('open');
   document.body.style.overflow = '';
 }
@@ -26,13 +28,38 @@ window.addEventListener('scroll', () => {
   if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
 }, { passive: true });
 
-/* ===== Animasi pop pada card: saat halaman dimuat & saat card diklik ===== */
+/* Load official Smart AI logo */
+(function loadBrandLogo() {
+  function injectCss() {
+    if (document.getElementById('smartai-logo-css')) return;
+    var s = document.createElement('style');
+    s.id = 'smartai-logo-css';
+    s.textContent = '.logo{display:inline-flex;align-items:center}.logo-img{height:42px;width:auto;display:block;object-fit:contain}footer .logo-img{height:36px}';
+    document.head.appendChild(s);
+  }
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var sc = document.createElement('script');
+      sc.src = src;
+      sc.onload = resolve;
+      sc.onerror = reject;
+      document.head.appendChild(sc);
+    });
+  }
+  injectCss();
+  loadScript('js/logo-a.js')
+    .then(function () { return loadScript('js/logo-b.js'); })
+    .then(function () { if (window.applySmartAILogos) window.applySmartAILogos(); })
+    .catch(function () {});
+})();
+
+/* ===== Animasi pop pada card ===== */
 (function () {
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var CARDS = '.why-card,.eco-card,.perf-card,.testi-card,.adv-card,.step,.feature-bar-item,.faq-item';
   var FORMS = '.form-card,.login-card';
-  var LOAD = CARDS + ',' + FORMS;               // animasi pop saat muncul
-  var CLICK = CARDS + ',.monitor-card,.stat-box'; // animasi pop saat diklik (form tidak ikut)
+  var LOAD = CARDS + ',' + FORMS;
+  var CLICK = CARDS + ',.monitor-card,.stat-box';
   var cards = [].slice.call(document.querySelectorAll(LOAD));
   function popIn(el) {
     if (!el.classList.contains('pop-card')) return;
@@ -57,16 +84,11 @@ window.addEventListener('scroll', () => {
         }
       });
     }, { threshold: .1 });
-    cards.forEach(function (el) {
-      io.observe(el);
-    });
+    cards.forEach(function (el) { io.observe(el); });
   } else {
     cards.forEach(popIn);
   }
-  setTimeout(function () {
-    cards.forEach(popIn);
-  }, 3500);
-  // pop saat diklik
+  setTimeout(function () { cards.forEach(popIn); }, 3500);
   document.addEventListener('click', function (e) {
     var el = e.target.closest && e.target.closest(CLICK);
     if (!el || !el.animate) return;
